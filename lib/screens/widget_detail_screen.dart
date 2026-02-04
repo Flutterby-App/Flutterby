@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/github.dart';
+import 'package:flutter_highlight/themes/vs2015.dart';
 import '../services/widget_data_service.dart';
 import '../models/flutter_widget.dart';
 
@@ -51,6 +52,26 @@ class _WidgetDetailScreenState extends State<WidgetDetailScreen>
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/category/${flutterWidget.categoryId}'),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              WidgetDataService.isFavorite(widget.widgetId)
+                  ? Icons.favorite
+                  : Icons.favorite_border,
+              color: WidgetDataService.isFavorite(widget.widgetId)
+                  ? Colors.red
+                  : null,
+            ),
+            onPressed: () {
+              setState(() {
+                WidgetDataService.toggleFavorite(widget.widgetId);
+              });
+            },
+            tooltip: WidgetDataService.isFavorite(widget.widgetId)
+                ? 'Remove from favorites'
+                : 'Add to favorites',
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -95,12 +116,12 @@ class _WidgetDetailScreenState extends State<WidgetDetailScreen>
                       if (widget.isMaterial)
                         Chip(
                           label: const Text('Material'),
-                          backgroundColor: Colors.blue.withOpacity(0.1),
+                          backgroundColor: Colors.blue.withValues(alpha: 0.1),
                         ),
                       if (widget.isCupertino)
                         Chip(
                           label: const Text('Cupertino'),
-                          backgroundColor: Colors.grey.withOpacity(0.1),
+                          backgroundColor: Colors.grey.withValues(alpha: 0.1),
                         ),
                     ],
                   ),
@@ -200,7 +221,9 @@ class _WidgetDetailScreenState extends State<WidgetDetailScreen>
               child: HighlightView(
                 widget.exampleCode,
                 language: 'dart',
-                theme: githubTheme,
+                theme: Theme.of(context).brightness == Brightness.dark
+                    ? vs2015Theme
+                    : githubTheme,
                 padding: const EdgeInsets.all(12),
                 textStyle: const TextStyle(
                   fontFamily: 'monospace',
@@ -251,7 +274,7 @@ class _WidgetDetailScreenState extends State<WidgetDetailScreen>
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
+                          color: Colors.red.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Text(

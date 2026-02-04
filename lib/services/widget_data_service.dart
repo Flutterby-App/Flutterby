@@ -4,6 +4,22 @@ import '../data/widget_samples.dart';
 import 'package:flutter/material.dart';
 
 class WidgetDataService {
+  static final Set<String> _favorites = {};
+
+  static bool isFavorite(String widgetId) => _favorites.contains(widgetId);
+
+  static void toggleFavorite(String widgetId) {
+    if (_favorites.contains(widgetId)) {
+      _favorites.remove(widgetId);
+    } else {
+      _favorites.add(widgetId);
+    }
+  }
+
+  static List<FlutterWidget> getFavorites() {
+    return widgets.where((w) => _favorites.contains(w.id)).toList();
+  }
+
   static final List<WidgetCategory> categories = [
     const WidgetCategory(
       id: 'layout',
@@ -86,7 +102,7 @@ The container is then surrounded by additional empty space described from the ma
     borderRadius: BorderRadius.circular(12),
     boxShadow: [
       BoxShadow(
-        color: Colors.grey.withOpacity(0.5),
+        color: Colors.grey.withValues(alpha: 0.5),
         spreadRadius: 5,
         blurRadius: 7,
         offset: Offset(0, 3),
