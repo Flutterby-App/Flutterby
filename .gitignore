@@ -40,7 +40,14 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Platform directories (web-only project)
+/android/
+/ios/
+/linux/
+/macos/
+/windows/
+
+# Old alpha app source (preserved in alpha tag)
+/lib/screens/
+/lib/services/
+/lib/widgets/
