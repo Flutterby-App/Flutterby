@@ -5,12 +5,14 @@ class PropertyEditorPanel extends StatelessWidget {
   final List<PropertySchema> properties;
   final Map<String, dynamic> values;
   final ValueChanged<Map<String, dynamic>> onChanged;
+  final VoidCallback? onReset;
 
   const PropertyEditorPanel({
     super.key,
     required this.properties,
     required this.values,
     required this.onChanged,
+    this.onReset,
   });
 
   void _update(String name, dynamic value) {
@@ -21,14 +23,35 @@ class PropertyEditorPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: properties.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final prop = properties[index];
-        return _buildEditor(prop);
-      },
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.all(16),
+            itemCount: properties.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            itemBuilder: (context, index) {
+              final prop = properties[index];
+              return _buildEditor(prop);
+            },
+          ),
+        ),
+        if (onReset != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: onReset,
+                icon: const Icon(Icons.restart_alt, size: 16),
+                label: const Text('Reset to defaults', style: TextStyle(fontSize: 13)),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -146,6 +169,7 @@ class _SliderEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -155,7 +179,7 @@ class _SliderEditor extends StatelessWidget {
             const Spacer(),
             Text(
               value.toStringAsFixed(1),
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -187,6 +211,7 @@ class _IntSliderEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -196,7 +221,7 @@ class _IntSliderEditor extends StatelessWidget {
             const Spacer(),
             Text(
               '$value',
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -275,12 +300,13 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Text(
       text,
       style: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w600,
-        color: Colors.grey.shade700,
+        color: colorScheme.onSurfaceVariant,
       ),
     );
   }

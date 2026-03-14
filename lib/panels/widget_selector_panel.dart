@@ -15,8 +15,9 @@ class WidgetSelectorPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      color: Colors.grey.shade50,
+      color: colorScheme.surfaceContainerLow,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -25,13 +26,13 @@ class WidgetSelectorPanel extends StatelessWidget {
             child: Text(
               'Widgets',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Colors.grey.shade600,
+                    color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.5,
                   ),
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1, color: colorScheme.outlineVariant),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -66,10 +67,11 @@ class _WidgetTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       child: Material(
-        color: selected ? Colors.indigo.shade50 : Colors.transparent,
+        color: selected ? colorScheme.primaryContainer : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         child: InkWell(
           borderRadius: BorderRadius.circular(8),
@@ -81,7 +83,7 @@ class _WidgetTile extends StatelessWidget {
                 Icon(
                   demo.icon,
                   size: 20,
-                  color: selected ? Colors.indigo : Colors.grey.shade600,
+                  color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -91,7 +93,7 @@ class _WidgetTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                      color: selected ? Colors.indigo : Colors.grey.shade800,
+                      color: selected ? colorScheme.onPrimaryContainer : colorScheme.onSurface,
                     ),
                   ),
                 ),

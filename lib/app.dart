@@ -6,26 +6,55 @@ import 'panels/property_editor_panel.dart';
 import 'panels/source_code_panel.dart';
 import 'panels/widget_selector_panel.dart';
 
-class FlutterbyApp extends StatelessWidget {
+class FlutterbyApp extends StatefulWidget {
   const FlutterbyApp({super.key});
+
+  @override
+  State<FlutterbyApp> createState() => _FlutterbyAppState();
+}
+
+class _FlutterbyAppState extends State<FlutterbyApp> {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutterby',
       debugShowCheckedModeBanner: false,
+      themeMode: _themeMode,
       theme: ThemeData(
         colorSchemeSeed: Colors.indigo,
         useMaterial3: true,
         brightness: Brightness.light,
       ),
-      home: const ExplorerScreen(),
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+        brightness: Brightness.dark,
+      ),
+      home: ExplorerScreen(
+        isDark: _themeMode == ThemeMode.dark,
+        onToggleTheme: _toggleTheme,
+      ),
     );
   }
 }
 
 class ExplorerScreen extends StatefulWidget {
-  const ExplorerScreen({super.key});
+  final bool isDark;
+  final VoidCallback onToggleTheme;
+
+  const ExplorerScreen({
+    super.key,
+    required this.isDark,
+    required this.onToggleTheme,
+  });
 
   @override
   State<ExplorerScreen> createState() => _ExplorerScreenState();
@@ -56,17 +85,25 @@ class _ExplorerScreenState extends State<ExplorerScreen> with SingleTickerProvid
 
   Map<String, dynamic> get _currentValues => _allValues[_selectedId]!;
 
+  void _resetCurrentWidget() {
+    setState(() {
+      _allValues[_selectedId] = _selectedDemo.defaultValues();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final demo = _selectedDemo;
     final values = _currentValues;
     final source = demo.sourceGenerator(values);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       body: Column(
         children: [
-          _buildHeader(context),
-          const Divider(height: 1),
+          _buildHeader(context, colorScheme),
+          Divider(height: 1, color: colorScheme.outlineVariant),
           Expanded(
             child: Row(
               children: [
@@ -79,7 +116,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> with SingleTickerProvid
                     onSelected: (id) => setState(() => _selectedId = id),
                   ),
                 ),
-                const VerticalDivider(width: 1),
+                VerticalDivider(width: 1, color: colorScheme.outlineVariant),
                 // Center panel — preview
                 Expanded(
                   flex: 3,
@@ -88,7 +125,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> with SingleTickerProvid
                     child: demo.previewBuilder(values),
                   ),
                 ),
-                const VerticalDivider(width: 1),
+                VerticalDivider(width: 1, color: colorScheme.outlineVariant),
                 // Right panel — properties + source
                 SizedBox(
                   width: 320,
@@ -96,9 +133,6 @@ class _ExplorerScreenState extends State<ExplorerScreen> with SingleTickerProvid
                     children: [
                       TabBar(
                         controller: _tabController,
-                        labelColor: Colors.indigo,
-                        unselectedLabelColor: Colors.grey.shade600,
-                        indicatorColor: Colors.indigo,
                         tabs: const [
                           Tab(text: 'Properties'),
                           Tab(text: 'Source Code'),
@@ -114,6 +148,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> with SingleTickerProvid
                               onChanged: (next) {
                                 setState(() => _allValues[_selectedId] = next);
                               },
+                              onReset: _resetCurrentWidget,
                             ),
                             SourceCodePanel(source: source),
                           ],
@@ -130,34 +165,47 @@ class _ExplorerScreenState extends State<ExplorerScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, ColorScheme colorScheme) {
     return Container(
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      color: Colors.white,
+      color: colorScheme.surface,
       child: Row(
         children: [
-          Icon(Icons.flutter_dash, color: Colors.indigo.shade400, size: 28),
+          Icon(Icons.flutter_dash, color: colorScheme.primary, size: 28),
           const SizedBox(width: 10),
           Text(
             'Flutterby',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: Colors.grey.shade800,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.indigo.shade50,
+              color: colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               'v0',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.indigo.shade400),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onPrimaryContainer,
+              ),
             ),
+          ),
+          const Spacer(),
+          IconButton(
+            icon: Icon(
+              widget.isDark ? Icons.light_mode : Icons.dark_mode,
+              size: 20,
+            ),
+            tooltip: widget.isDark ? 'Switch to light mode' : 'Switch to dark mode',
+            onPressed: widget.onToggleTheme,
           ),
         ],
       ),
