@@ -24,20 +24,38 @@ An interactive Flutter widget explorer and mini playground. Select a widget, twe
 | Input | ElevatedButton, TextField, Switch, Slider |
 | Composite | Card, ListTile |
 
+## Supported Platforms
+
+| Platform | Status |
+|----------|--------|
+| Web | Primary target |
+| macOS | Supported (min window 900x600) |
+| iOS | Supported (iPhone + iPad with multitasking) |
+| Android | Supported |
+| Linux | Supported |
+| Windows | Supported |
+
+All platforms share the same `lib/` core. Platform directories contain only the native shell and configuration.
+
 ## Run locally
 
 ```bash
+# Web (primary)
 flutter run -d chrome
-```
 
-Or build and serve:
+# macOS
+flutter run -d macos
 
-```bash
+# iOS simulator
+flutter run -d iphone
+
+# Android
+flutter run -d android
+
+# Or build web and serve statically
 flutter build web
 cd build/web && python3 -m http.server 8080
 ```
-
-Then open http://localhost:8080.
 
 ## Run tests
 

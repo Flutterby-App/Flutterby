@@ -40,14 +40,17 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Platform directories (web-only project)
-/android/
-/ios/
-/linux/
-/macos/
-/windows/
-
 # Old alpha app source (preserved in alpha tag)
 /lib/screens/
 /lib/services/
 /lib/widgets/
+
+# Platform build artifacts
+**/android/app/build/
+**/ios/Pods/
+**/ios/.symlinks/
+**/macos/Pods/
+**/macos/.symlinks/
+**/linux/flutter/ephemeral/
+**/windows/flutter/ephemeral/
+.flutter-plugins
