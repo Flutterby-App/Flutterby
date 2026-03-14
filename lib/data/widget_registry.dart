@@ -40,6 +40,9 @@ final List<WidgetDemo> widgetRegistry = [
   _rowDemo(),
   _columnDemo(),
   _elevatedButtonDemo(),
+  _iconDemo(),
+  _cardDemo(),
+  _stackDemo(),
 ];
 
 // ---------------------------------------------------------------------------
@@ -329,8 +332,284 @@ WidgetDemo _elevatedButtonDemo() {
 }
 
 // ---------------------------------------------------------------------------
+// Icon
+// ---------------------------------------------------------------------------
+/// A curated set of icons for the demo.
+const Map<String, IconData> _presetIcons = {
+  'star': Icons.star,
+  'favorite': Icons.favorite,
+  'home': Icons.home,
+  'settings': Icons.settings,
+  'search': Icons.search,
+  'check_circle': Icons.check_circle,
+  'lightbulb': Icons.lightbulb,
+  'rocket_launch': Icons.rocket_launch,
+  'palette': Icons.palette,
+  'bolt': Icons.bolt,
+};
+
+WidgetDemo _iconDemo() {
+  return WidgetDemo(
+    id: 'icon',
+    displayName: 'Icon',
+    icon: Icons.emoji_emotions_outlined,
+    properties: const [
+      PropertySchema(
+        name: 'icon',
+        label: 'Icon',
+        type: PropertyType.enumChoice,
+        defaultValue: 'star',
+        options: ['star', 'favorite', 'home', 'settings', 'search', 'check_circle', 'lightbulb', 'rocket_launch', 'palette', 'bolt'],
+      ),
+      PropertySchema(name: 'size', label: 'Size', type: PropertyType.double, defaultValue: 48.0, min: 16, max: 128),
+      PropertySchema(
+        name: 'color',
+        label: 'Color',
+        type: PropertyType.enumChoice,
+        defaultValue: 'Blue',
+        options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Teal', 'Grey', 'Indigo'],
+      ),
+    ],
+    previewBuilder: (props) {
+      final iconData = _presetIcons[props['icon']] ?? Icons.star;
+      final color = presetColors[props['color']] ?? Colors.blue;
+      return Icon(
+        iconData,
+        size: (props['size'] as num).toDouble(),
+        color: color,
+      );
+    },
+    sourceGenerator: (props) {
+      final iconName = props['icon'] as String;
+      final size = (props['size'] as num).toDouble();
+      final colorName = props['color'] as String;
+
+      final buf = StringBuffer();
+      buf.writeln("Icon(");
+      buf.writeln("  Icons.$iconName,");
+      buf.writeln("  size: ${_fmt(size)},");
+      buf.writeln("  color: ${_colorToCode(colorName)},");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Card
+// ---------------------------------------------------------------------------
+WidgetDemo _cardDemo() {
+  return WidgetDemo(
+    id: 'card',
+    displayName: 'Card',
+    icon: Icons.credit_card,
+    properties: const [
+      PropertySchema(name: 'elevation', label: 'Elevation', type: PropertyType.double, defaultValue: 4.0, min: 0, max: 24),
+      PropertySchema(name: 'borderRadius', label: 'Border Radius', type: PropertyType.double, defaultValue: 12.0, min: 0, max: 32),
+      PropertySchema(name: 'title', label: 'Title', type: PropertyType.string, defaultValue: 'Card Title'),
+      PropertySchema(name: 'subtitle', label: 'Subtitle', type: PropertyType.string, defaultValue: 'Card subtitle goes here'),
+      PropertySchema(name: 'showImage', label: 'Show Image Placeholder', type: PropertyType.bool, defaultValue: true),
+    ],
+    previewBuilder: (props) {
+      final elevation = (props['elevation'] as num).toDouble();
+      final borderRadius = (props['borderRadius'] as num).toDouble();
+      final showImage = props['showImage'] == true;
+
+      return SizedBox(
+        width: 280,
+        child: Card(
+          elevation: elevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (showImage)
+                Container(
+                  height: 120,
+                  width: double.infinity,
+                  color: Colors.indigo.shade100,
+                  child: Icon(Icons.image, size: 48, color: Colors.indigo.shade300),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      props['title'] as String,
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      props['subtitle'] as String,
+                      style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+    sourceGenerator: (props) {
+      final elevation = (props['elevation'] as num).toDouble();
+      final borderRadius = (props['borderRadius'] as num).toDouble();
+      final title = (props['title'] as String).replaceAll("'", "\\'");
+      final subtitle = (props['subtitle'] as String).replaceAll("'", "\\'");
+      final showImage = props['showImage'] == true;
+
+      final buf = StringBuffer();
+      buf.writeln("Card(");
+      buf.writeln("  elevation: ${_fmt(elevation)},");
+      buf.writeln("  shape: RoundedRectangleBorder(");
+      buf.writeln("    borderRadius: BorderRadius.circular(${_fmt(borderRadius)}),");
+      buf.writeln("  ),");
+      buf.writeln("  clipBehavior: Clip.antiAlias,");
+      buf.writeln("  child: Column(");
+      buf.writeln("    mainAxisSize: MainAxisSize.min,");
+      buf.writeln("    crossAxisAlignment: CrossAxisAlignment.start,");
+      buf.writeln("    children: [");
+      if (showImage) {
+        buf.writeln("      Container(");
+        buf.writeln("        height: 120,");
+        buf.writeln("        color: Colors.grey.shade200,");
+        buf.writeln("        child: const Center(");
+        buf.writeln("          child: Icon(Icons.image, size: 48),");
+        buf.writeln("        ),");
+        buf.writeln("      ),");
+      }
+      buf.writeln("      Padding(");
+      buf.writeln("        padding: const EdgeInsets.all(16),");
+      buf.writeln("        child: Column(");
+      buf.writeln("          crossAxisAlignment: CrossAxisAlignment.start,");
+      buf.writeln("          children: [");
+      buf.writeln("            Text(");
+      buf.writeln("              '$title',");
+      buf.writeln("              style: const TextStyle(");
+      buf.writeln("                fontSize: 18,");
+      buf.writeln("                fontWeight: FontWeight.w600,");
+      buf.writeln("              ),");
+      buf.writeln("            ),");
+      buf.writeln("            const SizedBox(height: 4),");
+      buf.writeln("            Text('$subtitle'),");
+      buf.writeln("          ],");
+      buf.writeln("        ),");
+      buf.writeln("      ),");
+      buf.writeln("    ],");
+      buf.writeln("  ),");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Stack
+// ---------------------------------------------------------------------------
+WidgetDemo _stackDemo() {
+  return WidgetDemo(
+    id: 'stack',
+    displayName: 'Stack',
+    icon: Icons.layers,
+    properties: const [
+      PropertySchema(
+        name: 'alignment',
+        label: 'Alignment',
+        type: PropertyType.enumChoice,
+        defaultValue: 'center',
+        options: ['topLeft', 'topCenter', 'topRight', 'centerLeft', 'center', 'centerRight', 'bottomLeft', 'bottomCenter', 'bottomRight'],
+      ),
+      PropertySchema(name: 'layers', label: 'Layers', type: PropertyType.int, defaultValue: 3, min: 2, max: 4),
+      PropertySchema(name: 'offset', label: 'Offset', type: PropertyType.double, defaultValue: 20.0, min: 5, max: 40),
+    ],
+    previewBuilder: (props) {
+      final alignment = _parseAlignment(props['alignment'] as String);
+      final layers = (props['layers'] as num).toInt();
+      final offset = (props['offset'] as num).toDouble();
+      final colors = [Colors.blue.shade200, Colors.indigo.shade300, Colors.purple.shade300, Colors.pink.shade300];
+
+      return SizedBox(
+        width: 240,
+        height: 200,
+        child: Stack(
+          alignment: alignment,
+          children: [
+            for (int i = 0; i < layers; i++)
+              Positioned(
+                left: i * offset,
+                top: i * offset,
+                child: Container(
+                  width: 100,
+                  height: 70,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: colors[i % colors.length],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.white, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        blurRadius: 4,
+                        offset: const Offset(1, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    'Layer ${i + 1}',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    },
+    sourceGenerator: (props) {
+      final alignment = props['alignment'] as String;
+      final layers = (props['layers'] as num).toInt();
+      final offset = (props['offset'] as num).toDouble();
+
+      final buf = StringBuffer();
+      buf.writeln("Stack(");
+      buf.writeln("  alignment: Alignment.$alignment,");
+      buf.writeln("  children: [");
+      for (int i = 0; i < layers; i++) {
+        buf.writeln("    Positioned(");
+        buf.writeln("      left: ${_fmt(i * offset)},");
+        buf.writeln("      top: ${_fmt(i * offset)},");
+        buf.writeln("      child: _layerBox('Layer ${i + 1}'),");
+        buf.writeln("    ),");
+      }
+      buf.writeln("  ],");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+Alignment _parseAlignment(String value) {
+  return switch (value) {
+    'topLeft' => Alignment.topLeft,
+    'topCenter' => Alignment.topCenter,
+    'topRight' => Alignment.topRight,
+    'centerLeft' => Alignment.centerLeft,
+    'center' => Alignment.center,
+    'centerRight' => Alignment.centerRight,
+    'bottomLeft' => Alignment.bottomLeft,
+    'bottomCenter' => Alignment.bottomCenter,
+    'bottomRight' => Alignment.bottomRight,
+    _ => Alignment.center,
+  };
+}
+
 /// Formats a double for clean code output (e.g. 24.0 not 24.000000000000004).
 String _fmt(double v) {
   if (v == v.roundToDouble()) return v.toStringAsFixed(0);

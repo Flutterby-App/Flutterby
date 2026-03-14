@@ -17,7 +17,7 @@ void main() {
     expect(find.text('v0'), findsOneWidget);
   });
 
-  testWidgets('Widget selector shows all 5 widgets', (WidgetTester tester) async {
+  testWidgets('Widget selector shows all 8 widgets', (WidgetTester tester) async {
     tester.view.physicalSize = testSize;
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.reset());
@@ -29,6 +29,9 @@ void main() {
     expect(find.text('Row'), findsOneWidget);
     expect(find.text('Column'), findsOneWidget);
     expect(find.text('ElevatedButton'), findsOneWidget);
+    expect(find.text('Icon'), findsOneWidget);
+    expect(find.text('Card'), findsOneWidget);
+    expect(find.text('Stack'), findsOneWidget);
   });
 
   testWidgets('Selecting a widget updates the preview header', (WidgetTester tester) async {
