@@ -17,7 +17,7 @@ void main() {
     expect(find.text('v0'), findsOneWidget);
   });
 
-  testWidgets('Widget selector shows all 8 widgets', (WidgetTester tester) async {
+  testWidgets('Widget selector shows all 10 widgets', (WidgetTester tester) async {
     tester.view.physicalSize = testSize;
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.reset());

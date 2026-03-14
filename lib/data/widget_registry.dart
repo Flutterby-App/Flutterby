@@ -55,6 +55,8 @@ final List<WidgetDemo> widgetRegistry = [
   _iconDemo(),
   _cardDemo(),
   _stackDemo(),
+  _paddingDemo(),
+  _centerDemo(),
 ];
 
 // ---------------------------------------------------------------------------
@@ -613,6 +615,129 @@ WidgetDemo _stackDemo() {
         buf.writeln("    ),");
       }
       buf.writeln("  ],");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Padding
+// ---------------------------------------------------------------------------
+WidgetDemo _paddingDemo() {
+  return WidgetDemo(
+    id: 'padding',
+    displayName: 'Padding',
+    icon: Icons.padding,
+    properties: const [
+      PropertySchema(name: 'horizontal', label: 'Horizontal', type: PropertyType.double, defaultValue: 24.0, min: 0, max: 64),
+      PropertySchema(name: 'vertical', label: 'Vertical', type: PropertyType.double, defaultValue: 16.0, min: 0, max: 64),
+      PropertySchema(name: 'childText', label: 'Child Text', type: PropertyType.string, defaultValue: 'Padded content'),
+      PropertySchema(name: 'showBorder', label: 'Show Boundary', type: PropertyType.bool, defaultValue: true),
+    ],
+    previewBuilder: (props) {
+      final h = (props['horizontal'] as num).toDouble();
+      final v = (props['vertical'] as num).toDouble();
+      final showBorder = props['showBorder'] == true;
+
+      return Container(
+        decoration: showBorder
+            ? BoxDecoration(
+                border: Border.all(color: Colors.indigo.shade200, width: 1),
+                borderRadius: BorderRadius.circular(4),
+              )
+            : null,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: h, vertical: v),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.indigo.shade50,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              props['childText'] as String,
+              style: const TextStyle(fontSize: 14),
+            ),
+          ),
+        ),
+      );
+    },
+    sourceGenerator: (props) {
+      final h = (props['horizontal'] as num).toDouble();
+      final v = (props['vertical'] as num).toDouble();
+      final childText = (props['childText'] as String).replaceAll("'", "\\'");
+
+      final buf = StringBuffer();
+      buf.writeln("Padding(");
+      if (h == v) {
+        buf.writeln("  padding: const EdgeInsets.all(${_fmt(h)}),");
+      } else {
+        buf.writeln("  padding: const EdgeInsets.symmetric(");
+        buf.writeln("    horizontal: ${_fmt(h)},");
+        buf.writeln("    vertical: ${_fmt(v)},");
+        buf.writeln("  ),");
+      }
+      buf.writeln("  child: Text('$childText'),");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Center
+// ---------------------------------------------------------------------------
+WidgetDemo _centerDemo() {
+  return WidgetDemo(
+    id: 'center',
+    displayName: 'Center',
+    icon: Icons.center_focus_strong,
+    properties: const [
+      PropertySchema(name: 'widthFactor', label: 'Width Factor', type: PropertyType.double, defaultValue: 1.0, min: 0.5, max: 3.0),
+      PropertySchema(name: 'heightFactor', label: 'Height Factor', type: PropertyType.double, defaultValue: 1.0, min: 0.5, max: 3.0),
+      PropertySchema(name: 'childText', label: 'Child Text', type: PropertyType.string, defaultValue: 'Centered'),
+      PropertySchema(name: 'showBorder', label: 'Show Boundary', type: PropertyType.bool, defaultValue: true),
+    ],
+    previewBuilder: (props) {
+      final wf = (props['widthFactor'] as num).toDouble();
+      final hf = (props['heightFactor'] as num).toDouble();
+      final showBorder = props['showBorder'] == true;
+
+      return Container(
+        decoration: showBorder
+            ? BoxDecoration(
+                border: Border.all(color: Colors.indigo.shade200, width: 1),
+                borderRadius: BorderRadius.circular(4),
+              )
+            : null,
+        child: Center(
+          widthFactor: wf,
+          heightFactor: hf,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.indigo.shade50,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              props['childText'] as String,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ),
+      );
+    },
+    sourceGenerator: (props) {
+      final wf = (props['widthFactor'] as num).toDouble();
+      final hf = (props['heightFactor'] as num).toDouble();
+      final childText = (props['childText'] as String).replaceAll("'", "\\'");
+
+      final buf = StringBuffer();
+      buf.writeln("Center(");
+      if (wf != 1.0) buf.writeln("  widthFactor: ${_fmt(wf)},");
+      if (hf != 1.0) buf.writeln("  heightFactor: ${_fmt(hf)},");
+      buf.writeln("  child: Text('$childText'),");
       buf.write(")");
       return buf.toString();
     },

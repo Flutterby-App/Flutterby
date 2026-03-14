@@ -19,13 +19,50 @@ class SourceCodePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lines = source.split('\n');
+    final lineCount = lines.length;
+
     return Container(
       color: _codeBg,
       child: Stack(
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-            child: _buildHighlightedCode(),
+            padding: const EdgeInsets.fromLTRB(0, 16, 20, 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Line numbers gutter
+                SizedBox(
+                  width: 44,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        for (int i = 1; i <= lineCount; i++)
+                          SizedBox(
+                            height: 20.8, // matches line height 13 * 1.6
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: Text(
+                                '$i',
+                                style: const TextStyle(
+                                  fontFamily: 'JetBrains Mono, Fira Code, Menlo, Consolas, monospace',
+                                  fontSize: 13,
+                                  height: 1.6,
+                                  color: Color(0xFF858585),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Code content
+                Expanded(child: _buildHighlightedCode()),
+              ],
+            ),
           ),
           Positioned(
             top: 8,
