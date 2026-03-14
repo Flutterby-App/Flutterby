@@ -37,11 +37,10 @@ Widget _demoBox(String label) {
     height: 40,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      color: Colors.indigo.shade100,
+      color: Colors.indigo.shade400,
       borderRadius: BorderRadius.circular(6),
-      border: Border.all(color: Colors.indigo.shade300),
     ),
-    child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+    child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
   );
 }
 
@@ -471,8 +470,8 @@ WidgetDemo _cardDemo() {
                 Container(
                   height: 120,
                   width: double.infinity,
-                  color: Colors.indigo.shade100,
-                  child: Icon(Icons.image, size: 48, color: Colors.indigo.shade300),
+                  color: Colors.indigo.shade400,
+                  child: Icon(Icons.image, size: 48, color: Colors.indigo.shade200),
                 ),
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -486,7 +485,7 @@ WidgetDemo _cardDemo() {
                     const SizedBox(height: 4),
                     Text(
                       props['subtitle'] as String,
-                      style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -571,7 +570,7 @@ WidgetDemo _stackDemo() {
       final alignment = _parseAlignment(props['alignment'] as String);
       final layers = (props['layers'] as num).toInt();
       final offset = (props['offset'] as num).toDouble();
-      final colors = [Colors.blue.shade200, Colors.indigo.shade300, Colors.purple.shade300, Colors.pink.shade300];
+      final colors = [Colors.blue.shade400, Colors.indigo.shade500, Colors.purple.shade400, Colors.pink.shade400];
 
       return SizedBox(
         width: 240,
@@ -654,7 +653,7 @@ WidgetDemo _paddingDemo() {
       return Container(
         decoration: showBorder
             ? BoxDecoration(
-                border: Border.all(color: Colors.indigo.shade200, width: 1),
+                border: Border.all(color: Colors.indigo.withValues(alpha: 0.4), width: 1),
                 borderRadius: BorderRadius.circular(4),
               )
             : null,
@@ -663,7 +662,7 @@ WidgetDemo _paddingDemo() {
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.indigo.shade50,
+              color: Colors.indigo.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
@@ -718,7 +717,7 @@ WidgetDemo _centerDemo() {
       return Container(
         decoration: showBorder
             ? BoxDecoration(
-                border: Border.all(color: Colors.indigo.shade200, width: 1),
+                border: Border.all(color: Colors.indigo.withValues(alpha: 0.4), width: 1),
                 borderRadius: BorderRadius.circular(4),
               )
             : null,
@@ -728,7 +727,7 @@ WidgetDemo _centerDemo() {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.indigo.shade50,
+              color: Colors.indigo.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -792,8 +791,8 @@ WidgetDemo _wrapDemo() {
             for (int i = 0; i < count; i++)
               Chip(
                 label: Text(labels[i % labels.length], style: const TextStyle(fontSize: 13)),
-                backgroundColor: Colors.indigo.shade50,
-                side: BorderSide(color: Colors.indigo.shade200),
+                backgroundColor: Colors.indigo.withValues(alpha: 0.12),
+                side: BorderSide(color: Colors.indigo.withValues(alpha: 0.3)),
               ),
           ],
         ),
@@ -927,7 +926,7 @@ WidgetDemo _sizedBoxDemo() {
 
       return Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.indigo.shade300, width: 1.5),
+          border: Border.all(color: Colors.indigo.withValues(alpha: 0.5), width: 1.5),
           borderRadius: BorderRadius.circular(4),
         ),
         child: SizedBox(
@@ -945,7 +944,7 @@ WidgetDemo _sizedBoxDemo() {
                       const SizedBox(height: 4),
                       Text(
                         '${w.round()} × ${h.round()}',
-                        style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                        style: const TextStyle(fontSize: 11, color: Colors.grey),
                       ),
                     ],
                   ),
