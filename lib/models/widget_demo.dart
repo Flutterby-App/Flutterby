@@ -40,6 +40,7 @@ class WidgetDemo {
   final String id;
   final String displayName;
   final IconData icon;
+  final String category;
   final List<PropertySchema> properties;
   final Widget Function(Map<String, dynamic> props) previewBuilder;
   final String Function(Map<String, dynamic> props) sourceGenerator;
@@ -48,6 +49,7 @@ class WidgetDemo {
     required this.id,
     required this.displayName,
     required this.icon,
+    this.category = 'Layout',
     required this.properties,
     required this.previewBuilder,
     required this.sourceGenerator,

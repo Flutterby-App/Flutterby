@@ -45,19 +45,24 @@ Widget _demoBox(String label) {
   );
 }
 
-/// All demo widgets available in Flutterby v0.
+/// All demo widgets available in Flutterby v0, grouped by category.
 final List<WidgetDemo> widgetRegistry = [
+  // Display
   _textDemo(),
+  _iconDemo(),
+  // Layout
   _containerDemo(),
   _rowDemo(),
   _columnDemo(),
-  _elevatedButtonDemo(),
-  _iconDemo(),
-  _cardDemo(),
+  _wrapDemo(),
   _stackDemo(),
   _paddingDemo(),
   _centerDemo(),
   _sizedBoxDemo(),
+  // Input
+  _elevatedButtonDemo(),
+  // Composite
+  _cardDemo(),
   _listTileDemo(),
 ];
 
@@ -69,6 +74,7 @@ WidgetDemo _textDemo() {
     id: 'text',
     displayName: 'Text',
     icon: Icons.text_fields,
+    category: 'Display',
     properties: const [
       PropertySchema(name: 'text', label: 'Text', type: PropertyType.string, defaultValue: 'Hello world'),
       PropertySchema(name: 'fontSize', label: 'Font Size', type: PropertyType.double, defaultValue: 24.0, min: 8, max: 72),
@@ -321,6 +327,7 @@ WidgetDemo _elevatedButtonDemo() {
     id: 'elevated_button',
     displayName: 'ElevatedButton',
     icon: Icons.smart_button,
+    category: 'Input',
     properties: const [
       PropertySchema(name: 'label', label: 'Label', type: PropertyType.string, defaultValue: 'Click Me'),
       PropertySchema(name: 'enabled', label: 'Enabled', type: PropertyType.bool, defaultValue: true),
@@ -384,6 +391,7 @@ WidgetDemo _iconDemo() {
     id: 'icon',
     displayName: 'Icon',
     icon: Icons.emoji_emotions_outlined,
+    category: 'Display',
     properties: const [
       PropertySchema(
         name: 'icon',
@@ -434,6 +442,7 @@ WidgetDemo _cardDemo() {
     id: 'card',
     displayName: 'Card',
     icon: Icons.credit_card,
+    category: 'Composite',
     properties: const [
       PropertySchema(name: 'elevation', label: 'Elevation', type: PropertyType.double, defaultValue: 4.0, min: 0, max: 24),
       PropertySchema(name: 'borderRadius', label: 'Border Radius', type: PropertyType.double, defaultValue: 12.0, min: 0, max: 32),
@@ -747,6 +756,85 @@ WidgetDemo _centerDemo() {
 }
 
 // ---------------------------------------------------------------------------
+// Wrap
+// ---------------------------------------------------------------------------
+WidgetDemo _wrapDemo() {
+  return WidgetDemo(
+    id: 'wrap',
+    displayName: 'Wrap',
+    icon: Icons.wrap_text,
+    properties: const [
+      PropertySchema(name: 'spacing', label: 'Spacing', type: PropertyType.double, defaultValue: 8.0, min: 0, max: 24),
+      PropertySchema(name: 'runSpacing', label: 'Run Spacing', type: PropertyType.double, defaultValue: 8.0, min: 0, max: 24),
+      PropertySchema(
+        name: 'alignment',
+        label: 'Alignment',
+        type: PropertyType.enumChoice,
+        defaultValue: 'start',
+        options: ['start', 'center', 'end', 'spaceBetween', 'spaceAround', 'spaceEvenly'],
+      ),
+      PropertySchema(name: 'chipCount', label: 'Chips', type: PropertyType.int, defaultValue: 6, min: 3, max: 10),
+    ],
+    previewBuilder: (props) {
+      final spacing = (props['spacing'] as num).toDouble();
+      final runSpacing = (props['runSpacing'] as num).toDouble();
+      final alignment = _parseWrapAlignment(props['alignment'] as String);
+      final count = (props['chipCount'] as num).toInt();
+      final labels = ['Flutter', 'Dart', 'Widget', 'Layout', 'Material', 'Design', 'Mobile', 'Web', 'Desktop', 'App'];
+
+      return SizedBox(
+        width: 300,
+        child: Wrap(
+          spacing: spacing,
+          runSpacing: runSpacing,
+          alignment: alignment,
+          children: [
+            for (int i = 0; i < count; i++)
+              Chip(
+                label: Text(labels[i % labels.length], style: const TextStyle(fontSize: 13)),
+                backgroundColor: Colors.indigo.shade50,
+                side: BorderSide(color: Colors.indigo.shade200),
+              ),
+          ],
+        ),
+      );
+    },
+    sourceGenerator: (props) {
+      final spacing = (props['spacing'] as num).toDouble();
+      final runSpacing = (props['runSpacing'] as num).toDouble();
+      final alignment = props['alignment'] as String;
+      final count = (props['chipCount'] as num).toInt();
+      final labels = ['Flutter', 'Dart', 'Widget', 'Layout', 'Material', 'Design', 'Mobile', 'Web', 'Desktop', 'App'];
+
+      final buf = StringBuffer();
+      buf.writeln("Wrap(");
+      buf.writeln("  spacing: ${_fmt(spacing)},");
+      buf.writeln("  runSpacing: ${_fmt(runSpacing)},");
+      buf.writeln("  alignment: WrapAlignment.$alignment,");
+      buf.writeln("  children: [");
+      for (int i = 0; i < count; i++) {
+        buf.writeln("    Chip(label: Text('${labels[i % labels.length]}')),");
+      }
+      buf.writeln("  ],");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+WrapAlignment _parseWrapAlignment(String value) {
+  return switch (value) {
+    'start' => WrapAlignment.start,
+    'center' => WrapAlignment.center,
+    'end' => WrapAlignment.end,
+    'spaceBetween' => WrapAlignment.spaceBetween,
+    'spaceAround' => WrapAlignment.spaceAround,
+    'spaceEvenly' => WrapAlignment.spaceEvenly,
+    _ => WrapAlignment.start,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // ListTile
 // ---------------------------------------------------------------------------
 WidgetDemo _listTileDemo() {
@@ -754,6 +842,7 @@ WidgetDemo _listTileDemo() {
     id: 'list_tile',
     displayName: 'ListTile',
     icon: Icons.list,
+    category: 'Composite',
     properties: const [
       PropertySchema(name: 'title', label: 'Title', type: PropertyType.string, defaultValue: 'List Tile Title'),
       PropertySchema(name: 'subtitle', label: 'Subtitle', type: PropertyType.string, defaultValue: 'Secondary text goes here'),

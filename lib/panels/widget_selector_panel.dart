@@ -20,6 +20,40 @@ class WidgetSelectorPanel extends StatefulWidget {
 class _WidgetSelectorPanelState extends State<WidgetSelectorPanel> {
   String _filter = '';
 
+  List<Widget> _buildGroupedList(List<WidgetDemo> demos, ColorScheme colorScheme) {
+    final widgets = <Widget>[];
+    String? lastCategory;
+
+    for (final demo in demos) {
+      if (demo.category != lastCategory) {
+        lastCategory = demo.category;
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            child: Text(
+              demo.category.toUpperCase(),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.0,
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+              ),
+            ),
+          ),
+        );
+      }
+      widgets.add(
+        _WidgetTile(
+          demo: demo,
+          selected: demo.id == widget.selectedId,
+          onTap: () => widget.onSelected(demo.id),
+        ),
+      );
+    }
+
+    return widgets;
+  }
+
   List<WidgetDemo> get _filteredDemos {
     if (_filter.isEmpty) return widget.demos;
     final lower = _filter.toLowerCase();
@@ -73,18 +107,9 @@ class _WidgetSelectorPanelState extends State<WidgetSelectorPanel> {
           ),
           Divider(height: 1, color: colorScheme.outlineVariant),
           Expanded(
-            child: ListView.builder(
+            child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: filtered.length,
-              itemBuilder: (context, index) {
-                final demo = filtered[index];
-                final selected = demo.id == widget.selectedId;
-                return _WidgetTile(
-                  demo: demo,
-                  selected: selected,
-                  onTap: () => widget.onSelected(demo.id),
-                );
-              },
+              children: _buildGroupedList(filtered, colorScheme),
             ),
           ),
         ],
