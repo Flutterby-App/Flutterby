@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/widget_registry.dart' show presetColors;
 import '../models/widget_demo.dart';
 
 class PropertyEditorPanel extends StatelessWidget {
@@ -281,7 +282,19 @@ class _EnumEditor extends StatelessWidget {
           runSpacing: 6,
           children: options.map((opt) {
             final selected = opt == value;
+            final color = _colorForOption(opt);
             return ChoiceChip(
+              avatar: color != null
+                  ? Container(
+                      width: 14,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                    )
+                  : null,
               label: Text(opt, style: const TextStyle(fontSize: 12)),
               selected: selected,
               onSelected: (_) => onChanged(opt),
@@ -292,6 +305,12 @@ class _EnumEditor extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Returns a Color if the option name matches a known color preset.
+Color? _colorForOption(String opt) {
+  const extras = {'Black': Colors.black};
+  return presetColors[opt] ?? extras[opt];
 }
 
 class _Label extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'data/widget_registry.dart';
 import 'models/widget_demo.dart';
 import 'panels/preview_panel.dart';
@@ -100,7 +101,11 @@ class _ExplorerScreenState extends State<ExplorerScreen> with SingleTickerProvid
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      body: Column(
+      body: KeyboardListener(
+        focusNode: FocusNode(),
+        autofocus: true,
+        onKeyEvent: _handleKeyEvent,
+        child: Column(
         children: [
           _buildHeader(context, colorScheme),
           Divider(height: 1, color: colorScheme.outlineVariant),
@@ -169,7 +174,24 @@ class _ExplorerScreenState extends State<ExplorerScreen> with SingleTickerProvid
           ),
         ],
       ),
+      ),
     );
+  }
+
+  void _handleKeyEvent(KeyEvent event) {
+    if (event is! KeyDownEvent) return;
+    final idx = widgetRegistry.indexWhere((d) => d.id == _selectedId);
+    if (event.logicalKey == LogicalKeyboardKey.arrowDown ||
+        event.logicalKey == LogicalKeyboardKey.arrowRight) {
+      if (idx < widgetRegistry.length - 1) {
+        setState(() => _selectedId = widgetRegistry[idx + 1].id);
+      }
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowUp ||
+        event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+      if (idx > 0) {
+        setState(() => _selectedId = widgetRegistry[idx - 1].id);
+      }
+    }
   }
 
   Widget _buildHeader(BuildContext context, ColorScheme colorScheme) {
