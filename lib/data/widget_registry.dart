@@ -1043,7 +1043,6 @@ WidgetDemo _sliderDemo() {
       );
     },
     sourceGenerator: (props) {
-      final value = (props['value'] as num).toDouble();
       final divisions = (props['divisions'] as num).toInt();
       final showLabel = props['showLabel'] == true;
       final colorName = props['color'] as String;
@@ -1381,11 +1380,11 @@ WidgetDemo _switchDemo() {
           children: [
             Text(props['label'] as String, style: const TextStyle(fontSize: 14)),
             const SizedBox(width: 12),
-            Switch(value: value, onChanged: (_) {}, activeColor: color),
+            Switch(value: value, onChanged: (_) {}, activeTrackColor: color),
           ],
         );
       }
-      return Switch(value: value, onChanged: (_) {}, activeColor: color);
+      return Switch(value: value, onChanged: (_) {}, activeTrackColor: color);
     },
     sourceGenerator: (props) {
       final value = props['value'] == true;

@@ -1,11 +1,11 @@
 {
-    "name": "flutterby",
-    "short_name": "flutterby",
+    "name": "Flutterby",
+    "short_name": "Flutterby",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "An interactive Flutter widget explorer and mini playground.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
