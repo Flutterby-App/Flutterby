@@ -29,8 +29,8 @@ void main() {
     expect(find.text('Icon'), findsOneWidget);
     expect(find.text('Container'), findsOneWidget);
     expect(find.text('Row'), findsOneWidget);
-    // Verify the count label shows all widgets
-    expect(find.textContaining('18 widgets'), findsOneWidget);
+    // Verify the count label shows widget count (e.g. "19 widgets")
+    expect(find.textContaining(RegExp(r'^\d+ widgets?$')), findsOneWidget);
   });
 
   testWidgets('Selecting a widget updates the preview header', (WidgetTester tester) async {

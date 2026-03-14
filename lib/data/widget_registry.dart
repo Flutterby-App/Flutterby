@@ -65,6 +65,7 @@ final List<WidgetDemo> widgetRegistry = [
   _elevatedButtonDemo(),
   _textFieldDemo(),
   _switchDemo(),
+  _sliderDemo(),
   // Composite
   _cardDemo(),
   _listTileDemo(),
@@ -986,6 +987,76 @@ WidgetDemo _sizedBoxDemo() {
         buf.writeln("    child: Text('$childText'),");
         buf.writeln("  ),");
       }
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Slider
+// ---------------------------------------------------------------------------
+WidgetDemo _sliderDemo() {
+  return WidgetDemo(
+    id: 'slider_widget',
+    displayName: 'Slider',
+    icon: Icons.tune,
+    category: 'Input',
+    description: 'A Material slider for selecting a value from a range.',
+    properties: const [
+      PropertySchema(name: 'value', label: 'Value', type: PropertyType.double, defaultValue: 0.5, min: 0.0, max: 1.0),
+      PropertySchema(name: 'divisions', label: 'Divisions', type: PropertyType.int, defaultValue: 0, min: 0, max: 20),
+      PropertySchema(name: 'showLabel', label: 'Show Label', type: PropertyType.bool, defaultValue: true),
+      PropertySchema(
+        name: 'color',
+        label: 'Active Color',
+        type: PropertyType.enumChoice,
+        defaultValue: 'Blue',
+        options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Indigo'],
+      ),
+    ],
+    previewBuilder: (props) {
+      final value = (props['value'] as num).toDouble().clamp(0.0, 1.0);
+      final divisions = (props['divisions'] as num).toInt();
+      final showLabel = props['showLabel'] == true;
+      final color = presetColors[props['color']] ?? Colors.blue;
+
+      return SizedBox(
+        width: 300,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Slider(
+              value: value,
+              divisions: divisions > 0 ? divisions : null,
+              label: showLabel ? value.toStringAsFixed(2) : null,
+              activeColor: color,
+              onChanged: (_) {},
+            ),
+            if (showLabel)
+              Text(
+                value.toStringAsFixed(2),
+                style: TextStyle(fontSize: 13, color: color, fontWeight: FontWeight.w600),
+              ),
+          ],
+        ),
+      );
+    },
+    sourceGenerator: (props) {
+      final value = (props['value'] as num).toDouble();
+      final divisions = (props['divisions'] as num).toInt();
+      final showLabel = props['showLabel'] == true;
+      final colorName = props['color'] as String;
+
+      final buf = StringBuffer();
+      buf.writeln("Slider(");
+      buf.writeln("  value: _value,");
+      if (divisions > 0) buf.writeln("  divisions: $divisions,");
+      if (showLabel) buf.writeln("  label: _value.toStringAsFixed(2),");
+      buf.writeln("  activeColor: ${_colorToCode(colorName)},");
+      buf.writeln("  onChanged: (double newValue) {");
+      buf.writeln("    setState(() => _value = newValue);");
+      buf.writeln("  },");
       buf.write(")");
       return buf.toString();
     },
