@@ -57,6 +57,8 @@ final List<WidgetDemo> widgetRegistry = [
   _stackDemo(),
   _paddingDemo(),
   _centerDemo(),
+  _sizedBoxDemo(),
+  _listTileDemo(),
 ];
 
 // ---------------------------------------------------------------------------
@@ -738,6 +740,146 @@ WidgetDemo _centerDemo() {
       if (wf != 1.0) buf.writeln("  widthFactor: ${_fmt(wf)},");
       if (hf != 1.0) buf.writeln("  heightFactor: ${_fmt(hf)},");
       buf.writeln("  child: Text('$childText'),");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ListTile
+// ---------------------------------------------------------------------------
+WidgetDemo _listTileDemo() {
+  return WidgetDemo(
+    id: 'list_tile',
+    displayName: 'ListTile',
+    icon: Icons.list,
+    properties: const [
+      PropertySchema(name: 'title', label: 'Title', type: PropertyType.string, defaultValue: 'List Tile Title'),
+      PropertySchema(name: 'subtitle', label: 'Subtitle', type: PropertyType.string, defaultValue: 'Secondary text goes here'),
+      PropertySchema(name: 'showLeading', label: 'Show Leading Icon', type: PropertyType.bool, defaultValue: true),
+      PropertySchema(
+        name: 'leadingIcon',
+        label: 'Leading Icon',
+        type: PropertyType.enumChoice,
+        defaultValue: 'person',
+        options: ['person', 'email', 'phone', 'star', 'settings', 'notifications'],
+      ),
+      PropertySchema(name: 'showTrailing', label: 'Show Trailing', type: PropertyType.bool, defaultValue: true),
+      PropertySchema(name: 'dense', label: 'Dense', type: PropertyType.bool, defaultValue: false),
+    ],
+    previewBuilder: (props) {
+      final showLeading = props['showLeading'] == true;
+      final showTrailing = props['showTrailing'] == true;
+      final dense = props['dense'] == true;
+      final leadingIcon = _listTileIcons[props['leadingIcon']] ?? Icons.person;
+
+      return SizedBox(
+        width: 340,
+        child: Card(
+          child: ListTile(
+            leading: showLeading ? Icon(leadingIcon) : null,
+            title: Text(props['title'] as String),
+            subtitle: Text(props['subtitle'] as String),
+            trailing: showTrailing ? const Icon(Icons.chevron_right) : null,
+            dense: dense,
+          ),
+        ),
+      );
+    },
+    sourceGenerator: (props) {
+      final title = (props['title'] as String).replaceAll("'", "\\'");
+      final subtitle = (props['subtitle'] as String).replaceAll("'", "\\'");
+      final showLeading = props['showLeading'] == true;
+      final showTrailing = props['showTrailing'] == true;
+      final dense = props['dense'] == true;
+      final leadingIcon = props['leadingIcon'] as String;
+
+      final buf = StringBuffer();
+      buf.writeln("ListTile(");
+      if (showLeading) buf.writeln("  leading: const Icon(Icons.$leadingIcon),");
+      buf.writeln("  title: const Text('$title'),");
+      buf.writeln("  subtitle: const Text('$subtitle'),");
+      if (showTrailing) buf.writeln("  trailing: const Icon(Icons.chevron_right),");
+      if (dense) buf.writeln("  dense: true,");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+const Map<String, IconData> _listTileIcons = {
+  'person': Icons.person,
+  'email': Icons.email,
+  'phone': Icons.phone,
+  'star': Icons.star,
+  'settings': Icons.settings,
+  'notifications': Icons.notifications,
+};
+
+// ---------------------------------------------------------------------------
+// SizedBox
+// ---------------------------------------------------------------------------
+WidgetDemo _sizedBoxDemo() {
+  return WidgetDemo(
+    id: 'sized_box',
+    displayName: 'SizedBox',
+    icon: Icons.aspect_ratio,
+    properties: const [
+      PropertySchema(name: 'width', label: 'Width', type: PropertyType.double, defaultValue: 200.0, min: 20, max: 400),
+      PropertySchema(name: 'height', label: 'Height', type: PropertyType.double, defaultValue: 100.0, min: 20, max: 300),
+      PropertySchema(name: 'hasChild', label: 'Has Child', type: PropertyType.bool, defaultValue: true),
+      PropertySchema(name: 'childText', label: 'Child Text', type: PropertyType.string, defaultValue: 'Fixed size'),
+    ],
+    previewBuilder: (props) {
+      final w = (props['width'] as num).toDouble();
+      final h = (props['height'] as num).toDouble();
+      final hasChild = props['hasChild'] == true;
+
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.indigo.shade300, width: 1.5),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: SizedBox(
+          width: w,
+          height: h,
+          child: hasChild
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        props['childText'] as String,
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${w.round()} × ${h.round()}',
+                        style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                      ),
+                    ],
+                  ),
+                )
+              : null,
+        ),
+      );
+    },
+    sourceGenerator: (props) {
+      final w = (props['width'] as num).toDouble();
+      final h = (props['height'] as num).toDouble();
+      final hasChild = props['hasChild'] == true;
+      final childText = (props['childText'] as String).replaceAll("'", "\\'");
+
+      final buf = StringBuffer();
+      buf.writeln("SizedBox(");
+      buf.writeln("  width: ${_fmt(w)},");
+      buf.writeln("  height: ${_fmt(h)},");
+      if (hasChild) {
+        buf.writeln("  child: Center(");
+        buf.writeln("    child: Text('$childText'),");
+        buf.writeln("  ),");
+      }
       buf.write(")");
       return buf.toString();
     },

@@ -122,7 +122,13 @@ class _ExplorerScreenState extends State<ExplorerScreen> with SingleTickerProvid
                   flex: 3,
                   child: PreviewPanel(
                     widgetName: demo.displayName,
-                    child: demo.previewBuilder(values),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: KeyedSubtree(
+                        key: ValueKey(_selectedId),
+                        child: demo.previewBuilder(values),
+                      ),
+                    ),
                   ),
                 ),
                 VerticalDivider(width: 1, color: colorScheme.outlineVariant),
