@@ -49,6 +49,9 @@ final List<WidgetDemo> widgetRegistry = [
   // Display
   _textDemo(),
   _iconDemo(),
+  _dividerDemo(),
+  _opacityDemo(),
+  _progressIndicatorDemo(),
   // Layout
   _containerDemo(),
   _rowDemo(),
@@ -60,6 +63,8 @@ final List<WidgetDemo> widgetRegistry = [
   _sizedBoxDemo(),
   // Input
   _elevatedButtonDemo(),
+  _textFieldDemo(),
+  _switchDemo(),
   // Composite
   _cardDemo(),
   _listTileDemo(),
@@ -74,6 +79,7 @@ WidgetDemo _textDemo() {
     displayName: 'Text',
     icon: Icons.text_fields,
     category: 'Display',
+    description: 'A run of styled text.',
     properties: const [
       PropertySchema(name: 'text', label: 'Text', type: PropertyType.string, defaultValue: 'Hello world'),
       PropertySchema(name: 'fontSize', label: 'Font Size', type: PropertyType.double, defaultValue: 24.0, min: 8, max: 72),
@@ -146,6 +152,7 @@ WidgetDemo _containerDemo() {
     id: 'container',
     displayName: 'Container',
     icon: Icons.check_box_outline_blank,
+    description: 'A box with decoration, padding, and sizing.',
     properties: const [
       PropertySchema(name: 'width', label: 'Width', type: PropertyType.double, defaultValue: 200.0, min: 50, max: 400),
       PropertySchema(name: 'height', label: 'Height', type: PropertyType.double, defaultValue: 120.0, min: 30, max: 400),
@@ -212,6 +219,7 @@ WidgetDemo _rowDemo() {
     id: 'row',
     displayName: 'Row',
     icon: Icons.table_rows_outlined,
+    description: 'Lays out children horizontally.',
     properties: const [
       PropertySchema(
         name: 'mainAxisAlignment',
@@ -269,6 +277,7 @@ WidgetDemo _columnDemo() {
     id: 'column',
     displayName: 'Column',
     icon: Icons.view_column_outlined,
+    description: 'Lays out children vertically.',
     properties: const [
       PropertySchema(
         name: 'mainAxisAlignment',
@@ -327,6 +336,7 @@ WidgetDemo _elevatedButtonDemo() {
     displayName: 'ElevatedButton',
     icon: Icons.smart_button,
     category: 'Input',
+    description: 'A Material button with elevation.',
     properties: const [
       PropertySchema(name: 'label', label: 'Label', type: PropertyType.string, defaultValue: 'Click Me'),
       PropertySchema(name: 'enabled', label: 'Enabled', type: PropertyType.bool, defaultValue: true),
@@ -391,6 +401,7 @@ WidgetDemo _iconDemo() {
     displayName: 'Icon',
     icon: Icons.emoji_emotions_outlined,
     category: 'Display',
+    description: 'A Material Design icon.',
     properties: const [
       PropertySchema(
         name: 'icon',
@@ -442,6 +453,7 @@ WidgetDemo _cardDemo() {
     displayName: 'Card',
     icon: Icons.credit_card,
     category: 'Composite',
+    description: 'A Material card with elevation and rounded corners.',
     properties: const [
       PropertySchema(name: 'elevation', label: 'Elevation', type: PropertyType.double, defaultValue: 4.0, min: 0, max: 24),
       PropertySchema(name: 'borderRadius', label: 'Border Radius', type: PropertyType.double, defaultValue: 12.0, min: 0, max: 32),
@@ -555,6 +567,7 @@ WidgetDemo _stackDemo() {
     id: 'stack',
     displayName: 'Stack',
     icon: Icons.layers,
+    description: 'Overlaps children on top of each other.',
     properties: const [
       PropertySchema(
         name: 'alignment',
@@ -639,6 +652,7 @@ WidgetDemo _paddingDemo() {
     id: 'padding',
     displayName: 'Padding',
     icon: Icons.padding,
+    description: 'Adds empty space around a child widget.',
     properties: const [
       PropertySchema(name: 'horizontal', label: 'Horizontal', type: PropertyType.double, defaultValue: 24.0, min: 0, max: 64),
       PropertySchema(name: 'vertical', label: 'Vertical', type: PropertyType.double, defaultValue: 16.0, min: 0, max: 64),
@@ -703,6 +717,7 @@ WidgetDemo _centerDemo() {
     id: 'center',
     displayName: 'Center',
     icon: Icons.center_focus_strong,
+    description: 'Centers its child within itself.',
     properties: const [
       PropertySchema(name: 'widthFactor', label: 'Width Factor', type: PropertyType.double, defaultValue: 1.0, min: 0.5, max: 3.0),
       PropertySchema(name: 'heightFactor', label: 'Height Factor', type: PropertyType.double, defaultValue: 1.0, min: 0.5, max: 3.0),
@@ -762,6 +777,7 @@ WidgetDemo _wrapDemo() {
     id: 'wrap',
     displayName: 'Wrap',
     icon: Icons.wrap_text,
+    description: 'Lays out children and wraps to the next line.',
     properties: const [
       PropertySchema(name: 'spacing', label: 'Spacing', type: PropertyType.double, defaultValue: 8.0, min: 0, max: 24),
       PropertySchema(name: 'runSpacing', label: 'Run Spacing', type: PropertyType.double, defaultValue: 8.0, min: 0, max: 24),
@@ -842,6 +858,7 @@ WidgetDemo _listTileDemo() {
     displayName: 'ListTile',
     icon: Icons.list,
     category: 'Composite',
+    description: 'A single row with icon, text, and trailing action.',
     properties: const [
       PropertySchema(name: 'title', label: 'Title', type: PropertyType.string, defaultValue: 'List Tile Title'),
       PropertySchema(name: 'subtitle', label: 'Subtitle', type: PropertyType.string, defaultValue: 'Secondary text goes here'),
@@ -913,6 +930,7 @@ WidgetDemo _sizedBoxDemo() {
     id: 'sized_box',
     displayName: 'SizedBox',
     icon: Icons.aspect_ratio,
+    description: 'A box with a fixed width and/or height.',
     properties: const [
       PropertySchema(name: 'width', label: 'Width', type: PropertyType.double, defaultValue: 200.0, min: 20, max: 400),
       PropertySchema(name: 'height', label: 'Height', type: PropertyType.double, defaultValue: 100.0, min: 20, max: 300),
@@ -968,6 +986,347 @@ WidgetDemo _sizedBoxDemo() {
         buf.writeln("    child: Text('$childText'),");
         buf.writeln("  ),");
       }
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Divider
+// ---------------------------------------------------------------------------
+WidgetDemo _dividerDemo() {
+  return WidgetDemo(
+    id: 'divider',
+    displayName: 'Divider',
+    icon: Icons.horizontal_rule,
+    category: 'Display',
+    description: 'A thin horizontal or vertical line.',
+    properties: const [
+      PropertySchema(name: 'thickness', label: 'Thickness', type: PropertyType.double, defaultValue: 1.0, min: 0.5, max: 8),
+      PropertySchema(name: 'indent', label: 'Indent', type: PropertyType.double, defaultValue: 0.0, min: 0, max: 60),
+      PropertySchema(name: 'endIndent', label: 'End Indent', type: PropertyType.double, defaultValue: 0.0, min: 0, max: 60),
+      PropertySchema(
+        name: 'color',
+        label: 'Color',
+        type: PropertyType.enumChoice,
+        defaultValue: 'Grey',
+        options: ['Grey', 'Blue', 'Red', 'Green', 'Orange', 'Purple', 'Teal', 'Indigo'],
+      ),
+    ],
+    previewBuilder: (props) {
+      final thickness = (props['thickness'] as num).toDouble();
+      final indent = (props['indent'] as num).toDouble();
+      final endIndent = (props['endIndent'] as num).toDouble();
+      final color = presetColors[props['color']] ?? Colors.grey;
+
+      return SizedBox(
+        width: 300,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Content above', style: TextStyle(fontSize: 14)),
+            const SizedBox(height: 8),
+            Divider(thickness: thickness, indent: indent, endIndent: endIndent, color: color),
+            const SizedBox(height: 8),
+            const Text('Content below', style: TextStyle(fontSize: 14)),
+          ],
+        ),
+      );
+    },
+    sourceGenerator: (props) {
+      final thickness = (props['thickness'] as num).toDouble();
+      final indent = (props['indent'] as num).toDouble();
+      final endIndent = (props['endIndent'] as num).toDouble();
+      final colorName = props['color'] as String;
+
+      final buf = StringBuffer();
+      buf.writeln("Divider(");
+      if (thickness != 1.0) buf.writeln("  thickness: ${_fmt(thickness)},");
+      if (indent != 0.0) buf.writeln("  indent: ${_fmt(indent)},");
+      if (endIndent != 0.0) buf.writeln("  endIndent: ${_fmt(endIndent)},");
+      if (colorName != 'Grey') buf.writeln("  color: ${_colorToCode(colorName)},");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Opacity
+// ---------------------------------------------------------------------------
+WidgetDemo _opacityDemo() {
+  return WidgetDemo(
+    id: 'opacity',
+    displayName: 'Opacity',
+    icon: Icons.opacity,
+    category: 'Display',
+    description: 'Makes a child partially transparent.',
+    properties: const [
+      PropertySchema(name: 'opacity', label: 'Opacity', type: PropertyType.double, defaultValue: 0.5, min: 0.0, max: 1.0),
+      PropertySchema(
+        name: 'icon',
+        label: 'Child Icon',
+        type: PropertyType.enumChoice,
+        defaultValue: 'star',
+        options: ['star', 'favorite', 'home', 'lightbulb', 'rocket_launch'],
+      ),
+      PropertySchema(
+        name: 'color',
+        label: 'Color',
+        type: PropertyType.enumChoice,
+        defaultValue: 'Blue',
+        options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Indigo'],
+      ),
+    ],
+    previewBuilder: (props) {
+      final opacity = (props['opacity'] as num).toDouble();
+      final iconData = _presetIcons[props['icon']] ?? Icons.star;
+      final color = presetColors[props['color']] ?? Colors.blue;
+
+      return Opacity(
+        opacity: opacity.clamp(0.0, 1.0),
+        child: Icon(iconData, size: 80, color: color),
+      );
+    },
+    sourceGenerator: (props) {
+      final opacity = (props['opacity'] as num).toDouble();
+      final iconName = props['icon'] as String;
+      final colorName = props['color'] as String;
+
+      final buf = StringBuffer();
+      buf.writeln("Opacity(");
+      buf.writeln("  opacity: ${_fmt(opacity)},");
+      buf.writeln("  child: Icon(");
+      buf.writeln("    Icons.$iconName,");
+      buf.writeln("    size: 80,");
+      buf.writeln("    color: ${_colorToCode(colorName)},");
+      buf.writeln("  ),");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// CircularProgressIndicator
+// ---------------------------------------------------------------------------
+WidgetDemo _progressIndicatorDemo() {
+  return WidgetDemo(
+    id: 'progress_indicator',
+    displayName: 'Progress',
+    icon: Icons.donut_large,
+    category: 'Display',
+    description: 'Circular or linear progress indicators.',
+    properties: const [
+      PropertySchema(
+        name: 'type',
+        label: 'Type',
+        type: PropertyType.enumChoice,
+        defaultValue: 'circular',
+        options: ['circular', 'linear'],
+      ),
+      PropertySchema(name: 'determinate', label: 'Determinate', type: PropertyType.bool, defaultValue: true),
+      PropertySchema(name: 'value', label: 'Value', type: PropertyType.double, defaultValue: 0.65, min: 0.0, max: 1.0),
+      PropertySchema(name: 'strokeWidth', label: 'Stroke Width', type: PropertyType.double, defaultValue: 4.0, min: 1, max: 12),
+      PropertySchema(
+        name: 'color',
+        label: 'Color',
+        type: PropertyType.enumChoice,
+        defaultValue: 'Blue',
+        options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Indigo'],
+      ),
+    ],
+    previewBuilder: (props) {
+      final isCircular = props['type'] == 'circular';
+      final determinate = props['determinate'] == true;
+      final value = (props['value'] as num).toDouble().clamp(0.0, 1.0);
+      final strokeWidth = (props['strokeWidth'] as num).toDouble();
+      final color = presetColors[props['color']] ?? Colors.blue;
+
+      if (isCircular) {
+        return SizedBox(
+          width: 80,
+          height: 80,
+          child: CircularProgressIndicator(
+            value: determinate ? value : null,
+            strokeWidth: strokeWidth,
+            color: color,
+          ),
+        );
+      } else {
+        return SizedBox(
+          width: 260,
+          child: LinearProgressIndicator(
+            value: determinate ? value : null,
+            minHeight: strokeWidth,
+            color: color,
+          ),
+        );
+      }
+    },
+    sourceGenerator: (props) {
+      final isCircular = props['type'] == 'circular';
+      final determinate = props['determinate'] == true;
+      final value = (props['value'] as num).toDouble();
+      final strokeWidth = (props['strokeWidth'] as num).toDouble();
+      final colorName = props['color'] as String;
+
+      final buf = StringBuffer();
+      if (isCircular) {
+        buf.writeln("CircularProgressIndicator(");
+        if (determinate) buf.writeln("  value: ${_fmt(value)},");
+        buf.writeln("  strokeWidth: ${_fmt(strokeWidth)},");
+        buf.writeln("  color: ${_colorToCode(colorName)},");
+      } else {
+        buf.writeln("LinearProgressIndicator(");
+        if (determinate) buf.writeln("  value: ${_fmt(value)},");
+        buf.writeln("  minHeight: ${_fmt(strokeWidth)},");
+        buf.writeln("  color: ${_colorToCode(colorName)},");
+      }
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// TextField
+// ---------------------------------------------------------------------------
+WidgetDemo _textFieldDemo() {
+  return WidgetDemo(
+    id: 'text_field',
+    displayName: 'TextField',
+    icon: Icons.edit,
+    category: 'Input',
+    description: 'A Material text input field.',
+    properties: const [
+      PropertySchema(name: 'label', label: 'Label', type: PropertyType.string, defaultValue: 'Email'),
+      PropertySchema(name: 'hint', label: 'Hint', type: PropertyType.string, defaultValue: 'Enter your email'),
+      PropertySchema(name: 'prefixIcon', label: 'Prefix Icon', type: PropertyType.bool, defaultValue: true),
+      PropertySchema(
+        name: 'border',
+        label: 'Border Style',
+        type: PropertyType.enumChoice,
+        defaultValue: 'outline',
+        options: ['outline', 'underline', 'none'],
+      ),
+      PropertySchema(name: 'filled', label: 'Filled', type: PropertyType.bool, defaultValue: false),
+      PropertySchema(name: 'enabled', label: 'Enabled', type: PropertyType.bool, defaultValue: true),
+    ],
+    previewBuilder: (props) {
+      final border = props['border'] as String;
+      final filled = props['filled'] == true;
+      final enabled = props['enabled'] == true;
+      final prefixIcon = props['prefixIcon'] == true;
+
+      InputBorder inputBorder;
+      switch (border) {
+        case 'underline':
+          inputBorder = const UnderlineInputBorder();
+        case 'none':
+          inputBorder = InputBorder.none;
+        default:
+          inputBorder = OutlineInputBorder(borderRadius: BorderRadius.circular(8));
+      }
+
+      return SizedBox(
+        width: 280,
+        child: TextField(
+          enabled: enabled,
+          decoration: InputDecoration(
+            labelText: props['label'] as String,
+            hintText: props['hint'] as String,
+            prefixIcon: prefixIcon ? const Icon(Icons.email) : null,
+            border: inputBorder,
+            filled: filled,
+          ),
+        ),
+      );
+    },
+    sourceGenerator: (props) {
+      final label = (props['label'] as String).replaceAll("'", "\\'");
+      final hint = (props['hint'] as String).replaceAll("'", "\\'");
+      final border = props['border'] as String;
+      final filled = props['filled'] == true;
+      final enabled = props['enabled'] == true;
+      final prefixIcon = props['prefixIcon'] == true;
+
+      final buf = StringBuffer();
+      buf.writeln("TextField(");
+      if (!enabled) buf.writeln("  enabled: false,");
+      buf.writeln("  decoration: InputDecoration(");
+      buf.writeln("    labelText: '$label',");
+      buf.writeln("    hintText: '$hint',");
+      if (prefixIcon) buf.writeln("    prefixIcon: const Icon(Icons.email),");
+      switch (border) {
+        case 'underline':
+          buf.writeln("    border: const UnderlineInputBorder(),");
+        case 'none':
+          buf.writeln("    border: InputBorder.none,");
+        default:
+          buf.writeln("    border: OutlineInputBorder(");
+          buf.writeln("      borderRadius: BorderRadius.circular(8),");
+          buf.writeln("    ),");
+      }
+      if (filled) buf.writeln("    filled: true,");
+      buf.writeln("  ),");
+      buf.write(")");
+      return buf.toString();
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Switch
+// ---------------------------------------------------------------------------
+WidgetDemo _switchDemo() {
+  return WidgetDemo(
+    id: 'switch_widget',
+    displayName: 'Switch',
+    icon: Icons.toggle_on_outlined,
+    category: 'Input',
+    description: 'A Material on/off toggle switch.',
+    properties: const [
+      PropertySchema(name: 'value', label: 'Value', type: PropertyType.bool, defaultValue: true),
+      PropertySchema(name: 'showLabel', label: 'Show Label', type: PropertyType.bool, defaultValue: true),
+      PropertySchema(name: 'label', label: 'Label', type: PropertyType.string, defaultValue: 'Enable notifications'),
+      PropertySchema(
+        name: 'color',
+        label: 'Active Color',
+        type: PropertyType.enumChoice,
+        defaultValue: 'Blue',
+        options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Teal', 'Indigo'],
+      ),
+    ],
+    previewBuilder: (props) {
+      final value = props['value'] == true;
+      final showLabel = props['showLabel'] == true;
+      final color = presetColors[props['color']] ?? Colors.blue;
+
+      if (showLabel) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(props['label'] as String, style: const TextStyle(fontSize: 14)),
+            const SizedBox(width: 12),
+            Switch(value: value, onChanged: (_) {}, activeColor: color),
+          ],
+        );
+      }
+      return Switch(value: value, onChanged: (_) {}, activeColor: color);
+    },
+    sourceGenerator: (props) {
+      final value = props['value'] == true;
+      final colorName = props['color'] as String;
+
+      final buf = StringBuffer();
+      buf.writeln("Switch(");
+      buf.writeln("  value: $value,");
+      buf.writeln("  onChanged: (bool newValue) {");
+      buf.writeln("    setState(() => _value = newValue);");
+      buf.writeln("  },");
+      if (colorName != 'Blue') buf.writeln("  activeColor: ${_colorToCode(colorName)},");
       buf.write(")");
       return buf.toString();
     },

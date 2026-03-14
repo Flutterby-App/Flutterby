@@ -122,6 +122,7 @@ class _ExplorerScreenState extends State<ExplorerScreen> with SingleTickerProvid
                   flex: 3,
                   child: PreviewPanel(
                     widgetName: demo.displayName,
+                    description: demo.description,
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 200),
                       child: KeyedSubtree(

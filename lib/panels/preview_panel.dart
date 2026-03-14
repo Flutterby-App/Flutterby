@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 class PreviewPanel extends StatelessWidget {
   final String widgetName;
+  final String description;
   final Widget child;
 
   const PreviewPanel({
     super.key,
     required this.widgetName,
+    this.description = '',
     required this.child,
   });
 
@@ -21,14 +23,31 @@ class PreviewPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
-            child: Text(
-              'Preview — $widgetName',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
+            child: Row(
+              children: [
+                Text(
+                  'Preview — $widgetName',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                ),
+                if (description.isNotEmpty) ...[
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
+                ],
+              ],
             ),
           ),
           Divider(height: 1, color: colorScheme.outlineVariant),

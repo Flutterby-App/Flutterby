@@ -17,21 +17,20 @@ void main() {
     expect(find.text('v0'), findsOneWidget);
   });
 
-  testWidgets('Widget selector shows all 10 widgets', (WidgetTester tester) async {
+  testWidgets('Widget selector shows all widgets', (WidgetTester tester) async {
     tester.view.physicalSize = testSize;
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.reset());
 
     await tester.pumpWidget(const FlutterbyApp());  // ignore: prefer_const_constructors
 
+    // Check visible widgets from top of list
     expect(find.text('Text'), findsWidgets);
+    expect(find.text('Icon'), findsOneWidget);
     expect(find.text('Container'), findsOneWidget);
     expect(find.text('Row'), findsOneWidget);
-    expect(find.text('Column'), findsOneWidget);
-    expect(find.text('ElevatedButton'), findsOneWidget);
-    expect(find.text('Icon'), findsOneWidget);
-    expect(find.text('Card'), findsOneWidget);
-    expect(find.text('Stack'), findsOneWidget);
+    // Verify the count label shows all widgets
+    expect(find.textContaining('18 widgets'), findsOneWidget);
   });
 
   testWidgets('Selecting a widget updates the preview header', (WidgetTester tester) async {
