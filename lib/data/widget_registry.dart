@@ -13,6 +13,18 @@ const Map<String, Color> presetColors = {
   'Indigo': Colors.indigo,
 };
 
+/// Text color presets (includes Black).
+const Map<String, Color> _textColors = {
+  'Black': Colors.black,
+  'Blue': Colors.blue,
+  'Red': Colors.red,
+  'Green': Colors.green,
+  'Orange': Colors.orange,
+  'Purple': Colors.purple,
+  'Teal': Colors.teal,
+  'Indigo': Colors.indigo,
+};
+
 /// Converts a color name from [presetColors] to a Flutter `Colors.*` string.
 String _colorToCode(String colorName) {
   return 'Colors.${colorName.toLowerCase()}';
@@ -57,6 +69,14 @@ WidgetDemo _textDemo() {
       PropertySchema(name: 'text', label: 'Text', type: PropertyType.string, defaultValue: 'Hello world'),
       PropertySchema(name: 'fontSize', label: 'Font Size', type: PropertyType.double, defaultValue: 24.0, min: 8, max: 72),
       PropertySchema(name: 'bold', label: 'Bold', type: PropertyType.bool, defaultValue: false),
+      PropertySchema(name: 'italic', label: 'Italic', type: PropertyType.bool, defaultValue: false),
+      PropertySchema(
+        name: 'color',
+        label: 'Color',
+        type: PropertyType.enumChoice,
+        defaultValue: 'Black',
+        options: ['Black', 'Blue', 'Red', 'Green', 'Orange', 'Purple', 'Teal', 'Indigo'],
+      ),
       PropertySchema(
         name: 'textAlign',
         label: 'Text Align',
@@ -71,6 +91,7 @@ WidgetDemo _textDemo() {
         'center': TextAlign.center,
         'right': TextAlign.right,
       }[props['textAlign']] ?? TextAlign.center;
+      final color = _textColors[props['color']] ?? Colors.black;
 
       return Text(
         props['text'] as String,
@@ -78,13 +99,17 @@ WidgetDemo _textDemo() {
         style: TextStyle(
           fontSize: (props['fontSize'] as num).toDouble(),
           fontWeight: props['bold'] == true ? FontWeight.bold : FontWeight.normal,
+          fontStyle: props['italic'] == true ? FontStyle.italic : FontStyle.normal,
+          color: color,
         ),
       );
     },
     sourceGenerator: (props) {
       final bold = props['bold'] == true;
+      final italic = props['italic'] == true;
       final fontSize = (props['fontSize'] as num).toDouble();
       final textAlign = props['textAlign'] as String;
+      final colorName = props['color'] as String;
       final text = props['text'] as String;
       final escaped = text.replaceAll("'", "\\'");
 
@@ -95,6 +120,8 @@ WidgetDemo _textDemo() {
       buf.writeln("  style: TextStyle(");
       buf.writeln("    fontSize: ${_fmt(fontSize)},");
       if (bold) buf.writeln("    fontWeight: FontWeight.bold,");
+      if (italic) buf.writeln("    fontStyle: FontStyle.italic,");
+      if (colorName != 'Black') buf.writeln("    color: ${_colorToCode(colorName)},");
       buf.writeln("  ),");
       buf.write(")");
       return buf.toString();

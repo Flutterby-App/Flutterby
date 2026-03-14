@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/widget_demo.dart';
 
-class WidgetSelectorPanel extends StatelessWidget {
+class WidgetSelectorPanel extends StatefulWidget {
   final List<WidgetDemo> demos;
   final String selectedId;
   final ValueChanged<String> onSelected;
@@ -14,36 +14,75 @@ class WidgetSelectorPanel extends StatelessWidget {
   });
 
   @override
+  State<WidgetSelectorPanel> createState() => _WidgetSelectorPanelState();
+}
+
+class _WidgetSelectorPanelState extends State<WidgetSelectorPanel> {
+  String _filter = '';
+
+  List<WidgetDemo> get _filteredDemos {
+    if (_filter.isEmpty) return widget.demos;
+    final lower = _filter.toLowerCase();
+    return widget.demos.where((d) => d.displayName.toLowerCase().contains(lower)).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final filtered = _filteredDemos;
+
     return Container(
       color: colorScheme.surfaceContainerLow,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+            padding: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+            child: TextField(
+              style: const TextStyle(fontSize: 13),
+              decoration: InputDecoration(
+                hintText: 'Filter widgets...',
+                hintStyle: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
+                prefixIcon: Icon(Icons.search, size: 18, color: colorScheme.onSurfaceVariant),
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: colorScheme.outlineVariant),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: colorScheme.outlineVariant),
+                ),
+                filled: true,
+                fillColor: colorScheme.surface,
+              ),
+              onChanged: (v) => setState(() => _filter = v),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
             child: Text(
-              'Widgets',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
+              '${filtered.length} widget${filtered.length == 1 ? '' : 's'}',
+              style: TextStyle(
+                fontSize: 11,
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           Divider(height: 1, color: colorScheme.outlineVariant),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: demos.length,
+              itemCount: filtered.length,
               itemBuilder: (context, index) {
-                final demo = demos[index];
-                final selected = demo.id == selectedId;
+                final demo = filtered[index];
+                final selected = demo.id == widget.selectedId;
                 return _WidgetTile(
                   demo: demo,
                   selected: selected,
-                  onTap: () => onSelected(demo.id),
+                  onTap: () => widget.onSelected(demo.id),
                 );
               },
             ),

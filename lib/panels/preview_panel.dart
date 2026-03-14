@@ -13,6 +13,8 @@ class PreviewPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       color: colorScheme.surfaceContainerLowest,
       child: Column(
@@ -36,7 +38,6 @@ class PreviewPanel extends StatelessWidget {
                 margin: const EdgeInsets.all(32),
                 constraints: const BoxConstraints(maxWidth: 500, maxHeight: 400),
                 decoration: BoxDecoration(
-                  color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: colorScheme.outlineVariant),
                   boxShadow: [
@@ -49,7 +50,10 @@ class PreviewPanel extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Center(child: child),
+                  child: CustomPaint(
+                    painter: _CheckerboardPainter(isDark: isDark),
+                    child: Center(child: child),
+                  ),
                 ),
               ),
             ),
@@ -58,4 +62,40 @@ class PreviewPanel extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Subtle checkerboard background — helps visualize widget bounds and transparency.
+class _CheckerboardPainter extends CustomPainter {
+  final bool isDark;
+  _CheckerboardPainter({required this.isDark});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const cellSize = 12.0;
+    final colorA = isDark ? const Color(0xFF2A2A2A) : const Color(0xFFFFFFFF);
+    final colorB = isDark ? const Color(0xFF272727) : const Color(0xFFFAFAFA);
+
+    final paintA = Paint()..color = colorA;
+    final paintB = Paint()..color = colorB;
+
+    // Fill with base color first
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paintA);
+
+    // Draw alternate cells
+    for (double y = 0; y < size.height; y += cellSize) {
+      for (double x = 0; x < size.width; x += cellSize) {
+        final col = (x / cellSize).floor();
+        final row = (y / cellSize).floor();
+        if ((col + row) % 2 == 1) {
+          canvas.drawRect(
+            Rect.fromLTWH(x, y, cellSize, cellSize),
+            paintB,
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CheckerboardPainter oldDelegate) => oldDelegate.isDark != isDark;
 }
