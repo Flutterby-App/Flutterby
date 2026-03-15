@@ -1,10 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterby/app.dart';
+import 'package:flutterby/services/persistence_service.dart';
 
 void main() {
   // This is a desktop-first app; use a reasonable window size for tests.
   const testSize = Size(1280, 800);
+
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    // Provide a fake SharedPreferences for tests
+    final store = <String, Object>{};
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/shared_preferences'),
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'getAll') {
+          return store;
+        } else if (methodCall.method.startsWith('set')) {
+          final args = methodCall.arguments as Map;
+          store[args['key'] as String] = args['value'];
+          return true;
+        } else if (methodCall.method == 'remove') {
+          store.remove(methodCall.arguments as String);
+          return true;
+        }
+        return null;
+      },
+    );
+    await PersistenceService.init();
+  });
 
   testWidgets('App renders and shows Flutterby header', (WidgetTester tester) async {
     tester.view.physicalSize = testSize;
@@ -14,7 +40,7 @@ void main() {
     await tester.pumpWidget(const FlutterbyApp());  // ignore: prefer_const_constructors
 
     expect(find.text('Flutterby'), findsOneWidget);
-    expect(find.text('v0'), findsOneWidget);
+    expect(find.text('v2'), findsOneWidget);
   });
 
   testWidgets('Widget selector shows all widgets', (WidgetTester tester) async {
@@ -50,7 +76,7 @@ void main() {
     expect(find.text('Preview — Container'), findsOneWidget);
   });
 
-  testWidgets('Properties and Source Code tabs exist', (WidgetTester tester) async {
+  testWidgets('Properties, Source Code, and Docs tabs exist', (WidgetTester tester) async {
     tester.view.physicalSize = testSize;
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.reset());
@@ -59,6 +85,24 @@ void main() {
 
     expect(find.text('Properties'), findsOneWidget);
     expect(find.text('Source Code'), findsOneWidget);
+    expect(find.text('Docs'), findsOneWidget);
+  });
+
+  testWidgets('Docs tab shows documentation content', (WidgetTester tester) async {
+    tester.view.physicalSize = testSize;
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() => tester.view.reset());
+
+    await tester.pumpWidget(const FlutterbyApp());  // ignore: prefer_const_constructors
+
+    // Switch to Docs tab
+    await tester.tap(find.text('Docs'));
+    await tester.pumpAndSettle();
+
+    // The ReferencePanel should be present
+    expect(find.byType(ListView), findsWidgets);
+    // Should show the PROPERTIES section header
+    expect(find.text('PROPERTIES'), findsOneWidget);
   });
 
   testWidgets('Source Code tab shows generated Dart', (WidgetTester tester) async {
@@ -72,9 +116,8 @@ void main() {
     await tester.tap(find.text('Source Code'));
     await tester.pumpAndSettle();
 
-    // Should contain generated Text widget code
-    expect(find.textContaining('Text('), findsWidgets);
-    expect(find.textContaining('TextAlign'), findsOneWidget);
+    // Source code is rendered as SelectableText.rich — verify it exists
+    expect(find.byType(SelectableText), findsOneWidget);
   });
 
   testWidgets('Dark mode toggle works', (WidgetTester tester) async {

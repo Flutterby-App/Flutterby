@@ -42,7 +42,6 @@ app.*.map.json
 
 # Old alpha app source (preserved in alpha tag)
 /lib/screens/
-/lib/services/
 /lib/widgets/
 
 # Platform build artifacts

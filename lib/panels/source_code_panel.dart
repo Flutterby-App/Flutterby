@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../services/dartpad_service.dart';
 
 // VS Code dark+ inspired colors for Dart syntax highlighting.
 const _codeBg = Color(0xFF1E1E1E);
@@ -67,7 +68,14 @@ class SourceCodePanel extends StatelessWidget {
           Positioned(
             top: 8,
             right: 8,
-            child: _CopyButton(source: source),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _DartPadButton(source: source),
+                const SizedBox(width: 6),
+                _CopyButton(source: source),
+              ],
+            ),
           ),
         ],
       ),
@@ -134,6 +142,37 @@ class _CopyButtonState extends State<_CopyButton> {
                   fontSize: 12,
                   color: _copied ? const Color(0xFF4EC9B0) : Colors.white70,
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DartPadButton extends StatelessWidget {
+  final String source;
+  const _DartPadButton({required this.source});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white.withValues(alpha: 0.1),
+      borderRadius: BorderRadius.circular(6),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(6),
+        onTap: () => DartPadService.openInDartPad(source),
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.open_in_new, size: 14, color: Colors.white70),
+              SizedBox(width: 6),
+              Text(
+                'DartPad',
+                style: TextStyle(fontSize: 12, color: Colors.white70),
               ),
             ],
           ),

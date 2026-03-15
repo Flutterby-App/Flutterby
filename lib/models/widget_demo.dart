@@ -35,6 +35,23 @@ class PropertySchema {
   });
 }
 
+/// A property reference entry for the Docs tab (name, type, required, default).
+class WidgetPropertyRef {
+  final String name;
+  final String type;
+  final String description;
+  final bool isRequired;
+  final String? defaultValue;
+
+  const WidgetPropertyRef({
+    required this.name,
+    required this.type,
+    required this.description,
+    this.isRequired = false,
+    this.defaultValue,
+  });
+}
+
 /// A demo widget entry in the explorer.
 class WidgetDemo {
   final String id;
@@ -46,6 +63,21 @@ class WidgetDemo {
   final Widget Function(Map<String, dynamic> props) previewBuilder;
   final String Function(Map<String, dynamic> props) sourceGenerator;
 
+  /// Extended documentation shown in the Docs tab.
+  final String? documentation;
+
+  /// Full property reference table for the Docs tab.
+  final List<WidgetPropertyRef>? propertyReference;
+
+  /// IDs of related widgets (tappable chips in Docs tab).
+  final List<String>? relatedWidgetIds;
+
+  /// Whether this is a Material Design widget.
+  final bool isMaterial;
+
+  /// Whether this is a Cupertino (iOS-style) widget.
+  final bool isCupertino;
+
   const WidgetDemo({
     required this.id,
     required this.displayName,
@@ -55,6 +87,11 @@ class WidgetDemo {
     required this.properties,
     required this.previewBuilder,
     required this.sourceGenerator,
+    this.documentation,
+    this.propertyReference,
+    this.relatedWidgetIds,
+    this.isMaterial = true,
+    this.isCupertino = false,
   });
 
   /// Returns a map of property name → default value.

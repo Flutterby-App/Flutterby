@@ -1,19 +1,31 @@
 # Flutterby
 
-An interactive Flutter widget explorer and mini playground. Select a widget, tweak its properties, see the live preview update immediately, and view syntax-highlighted generated Dart source code.
+An interactive Flutter widget explorer, playground, and reference tool. Select a widget, tweak its properties in real time, see a live preview with syntax-highlighted source code, read documentation with full property references, and export directly to DartPad.
+
+Built with Flutter, for learning Flutter.
 
 ## Features
 
+### Explore & Play
 - **19 widgets** across 4 categories (Display, Layout, Input, Composite)
 - **Live preview** with checkerboard background and animated crossfade transitions
-- **Syntax-highlighted source code** with line numbers, VS Code dark+ theme, and copy-to-clipboard
+- **Property editors** — text fields, sliders, toggles, and color-coded choice chips
+- **Keyboard navigation** — arrow keys to browse widgets instantly
+
+### Learn
+- **Docs tab** with documentation, full property reference table (name, type, required/optional, defaults), Material/Cupertino badges, and tappable related widget chips for discovery
+- **Syntax-highlighted source code** — VS Code dark+ theme with line numbers and copy-to-clipboard
+- **Open in DartPad** — export any widget configuration as a runnable `main.dart` and iterate in DartPad
+
+### Polished
+- **Responsive layout** — adapts across three breakpoints:
+  - **Wide (900+px):** 3-panel layout (selector | preview | properties)
+  - **Medium (600–900px):** sidebar + stacked preview/properties
+  - **Compact (<600px):** single column with bottom navigation
 - **Dark/light mode** toggle
-- **Search filter** for the widget list with category headers
-- **Color swatches** on color picker chips
-- **Widget descriptions** shown in the preview header
-- **Keyboard navigation** — arrow keys to move between widgets
-- **Reset to defaults** button per widget
-- **Property editors**: text fields, sliders, toggles, choice chips
+- **State persistence** — remembers your selected widget, theme, and all edited property values across sessions
+- **Search filter** for the widget list with category grouping
+- **Reset to defaults** per widget
 
 ### Supported Widgets
 
@@ -24,20 +36,18 @@ An interactive Flutter widget explorer and mini playground. Select a widget, twe
 | Input | ElevatedButton, TextField, Switch, Slider |
 | Composite | Card, ListTile |
 
-## Supported Platforms
+## Platforms
 
 | Platform | Status |
 |----------|--------|
 | Web | Primary target |
-| macOS | Supported (min window 900x600) |
-| iOS | Supported (iPhone + iPad with multitasking) |
+| macOS | Supported |
+| iOS | Supported |
 | Android | Supported |
 | Linux | Supported |
 | Windows | Supported |
 
-All platforms share the same `lib/` core. Platform directories contain only the native shell and configuration.
-
-## Run locally
+## Quick Start
 
 ```bash
 # Web (primary)
@@ -46,34 +56,41 @@ flutter run -d chrome
 # macOS
 flutter run -d macos
 
-# iOS simulator
-flutter run -d iphone
-
-# Android
-flutter run -d android
-
-# Or build web and serve statically
+# Or build and serve statically
 flutter build web
 cd build/web && python3 -m http.server 8080
 ```
 
-## Run tests
+## Tests
 
 ```bash
-flutter test
+flutter test        # 8 integration tests
+flutter analyze     # zero issues
 ```
 
 ## Architecture
 
-**State management:** Plain `setState` — no external packages. Each widget demo's property values are stored in a `Map<String, Map<String, dynamic>>` keyed by widget ID, so switching between widgets preserves edits.
+```
+lib/
+├── main.dart                        # Entry point + persistence init
+├── app.dart                         # App shell, responsive layouts, state management
+├── models/
+│   └── widget_demo.dart             # WidgetDemo, PropertySchema, WidgetPropertyRef
+├── data/
+│   └── widget_registry.dart         # All 19 widget demos with docs & properties
+├── panels/
+│   ├── widget_selector_panel.dart   # Left sidebar: search, categories, widget list
+│   ├── preview_panel.dart           # Center: live widget preview with checkerboard
+│   ├── property_editor_panel.dart   # Right tab: interactive property controls
+│   ├── source_code_panel.dart       # Right tab: syntax-highlighted code + DartPad export
+│   └── reference_panel.dart         # Right tab: docs, property reference, related widgets
+└── services/
+    ├── dartpad_service.dart          # Wraps source in template, opens DartPad
+    └── persistence_service.dart     # SharedPreferences for session state
+```
 
-**Data model:** `WidgetDemo` holds a property schema, category, description, preview builder, and source generator. All 19 demos are registered in `widget_registry.dart`. Adding a new widget means adding one function to that file and appending it to the registry list.
+**State management:** Plain `setState` with debounced persistence — no external state packages. Property values stored in a `Map<String, Map<String, dynamic>>` keyed by widget ID.
 
-**Layout:** Three-panel desktop layout — widget selector with category headers and search (left), live preview with checkerboard background (center), properties/source tabs with syntax highlighting (right).
+**Adding a widget:** Add one function to `widget_registry.dart` with a `WidgetDemo` (preview builder, source generator, property schema, docs) and append it to the registry list.
 
-**File structure:**
-- `lib/main.dart` — entry point
-- `lib/app.dart` — app shell, theme management, keyboard navigation, and main `ExplorerScreen`
-- `lib/models/widget_demo.dart` — `WidgetDemo` and `PropertySchema` data classes
-- `lib/data/widget_registry.dart` — all 19 widget demo definitions
-- `lib/panels/` — UI panels (selector, preview, property editor, source code)
+**Dependencies:** `url_launcher` (DartPad export), `shared_preferences` (session persistence). Everything else is pure Flutter.

@@ -44,7 +44,7 @@ Widget _demoBox(String label) {
   );
 }
 
-/// All demo widgets available in Flutterby v0, grouped by category.
+/// All demo widgets available in Flutterby v2, grouped by category.
 final List<WidgetDemo> widgetRegistry = [
   // Display
   _textDemo(),
@@ -81,6 +81,17 @@ WidgetDemo _textDemo() {
     icon: Icons.text_fields,
     category: 'Display',
     description: 'A run of styled text.',
+    documentation: 'The Text widget displays a string of text with a single style. '
+        'The string might break across multiple lines or might all be displayed '
+        'on the same line depending on the layout constraints.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'data', type: 'String', description: 'The text to display', isRequired: true),
+      WidgetPropertyRef(name: 'style', type: 'TextStyle?', description: 'The style to use for the text'),
+      WidgetPropertyRef(name: 'textAlign', type: 'TextAlign?', description: 'How the text should be aligned horizontally'),
+      WidgetPropertyRef(name: 'maxLines', type: 'int?', description: 'Maximum number of lines to display'),
+      WidgetPropertyRef(name: 'overflow', type: 'TextOverflow?', description: 'How visual overflow should be handled'),
+    ],
+    relatedWidgetIds: const ['icon', 'opacity'],
     properties: const [
       PropertySchema(name: 'text', label: 'Text', type: PropertyType.string, defaultValue: 'Hello world'),
       PropertySchema(name: 'fontSize', label: 'Font Size', type: PropertyType.double, defaultValue: 24.0, min: 8, max: 72),
@@ -154,6 +165,20 @@ WidgetDemo _containerDemo() {
     displayName: 'Container',
     icon: Icons.check_box_outline_blank,
     description: 'A box with decoration, padding, and sizing.',
+    documentation: 'A convenience widget that combines common painting, positioning, and sizing widgets. '
+        'A container first surrounds the child with padding (inflated by any borders present in '
+        'the decoration) and then applies additional constraints to the padded extent. '
+        'The container is then surrounded by additional empty space described from the margin.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'child', type: 'Widget?', description: 'The widget below this widget in the tree'),
+      WidgetPropertyRef(name: 'padding', type: 'EdgeInsetsGeometry?', description: 'Empty space to inscribe inside the decoration'),
+      WidgetPropertyRef(name: 'color', type: 'Color?', description: 'The color to paint behind the child'),
+      WidgetPropertyRef(name: 'decoration', type: 'Decoration?', description: 'The decoration to paint behind the child'),
+      WidgetPropertyRef(name: 'width', type: 'double?', description: 'The width of the container'),
+      WidgetPropertyRef(name: 'height', type: 'double?', description: 'The height of the container'),
+      WidgetPropertyRef(name: 'margin', type: 'EdgeInsetsGeometry?', description: 'Empty space to surround the decoration and child'),
+    ],
+    relatedWidgetIds: const ['padding', 'center', 'sized_box'],
     properties: const [
       PropertySchema(name: 'width', label: 'Width', type: PropertyType.double, defaultValue: 200.0, min: 50, max: 400),
       PropertySchema(name: 'height', label: 'Height', type: PropertyType.double, defaultValue: 120.0, min: 30, max: 400),
@@ -221,6 +246,17 @@ WidgetDemo _rowDemo() {
     displayName: 'Row',
     icon: Icons.table_rows_outlined,
     description: 'Lays out children horizontally.',
+    documentation: 'A widget that displays its children in a horizontal array. To cause a child to expand '
+        'to fill the available horizontal space, wrap the child in an Expanded widget. '
+        'The Row widget does not scroll. If you have a line of widgets and want them to be able '
+        'to scroll if there is insufficient room, consider using a ListView.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'children', type: 'List<Widget>', description: 'The widgets below this widget in the tree', isRequired: true),
+      WidgetPropertyRef(name: 'mainAxisAlignment', type: 'MainAxisAlignment', description: 'How the children should be placed along the main axis', defaultValue: 'MainAxisAlignment.start'),
+      WidgetPropertyRef(name: 'crossAxisAlignment', type: 'CrossAxisAlignment', description: 'How the children should be placed along the cross axis', defaultValue: 'CrossAxisAlignment.center'),
+      WidgetPropertyRef(name: 'mainAxisSize', type: 'MainAxisSize', description: 'How much space to occupy in the main axis', defaultValue: 'MainAxisSize.max'),
+    ],
+    relatedWidgetIds: const ['column', 'wrap', 'stack'],
     properties: const [
       PropertySchema(
         name: 'mainAxisAlignment',
@@ -279,6 +315,17 @@ WidgetDemo _columnDemo() {
     displayName: 'Column',
     icon: Icons.view_column_outlined,
     description: 'Lays out children vertically.',
+    documentation: 'A widget that displays its children in a vertical array. To cause a child to expand '
+        'to fill the available vertical space, wrap the child in an Expanded widget. '
+        'The Column widget does not scroll. If you have a column of widgets and want them to be '
+        'able to scroll if there is insufficient room, consider using a ListView.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'children', type: 'List<Widget>', description: 'The widgets below this widget in the tree', isRequired: true),
+      WidgetPropertyRef(name: 'mainAxisAlignment', type: 'MainAxisAlignment', description: 'How the children should be placed along the main axis', defaultValue: 'MainAxisAlignment.start'),
+      WidgetPropertyRef(name: 'crossAxisAlignment', type: 'CrossAxisAlignment', description: 'How the children should be placed along the cross axis', defaultValue: 'CrossAxisAlignment.center'),
+      WidgetPropertyRef(name: 'mainAxisSize', type: 'MainAxisSize', description: 'How much space to occupy in the main axis', defaultValue: 'MainAxisSize.max'),
+    ],
+    relatedWidgetIds: const ['row', 'wrap', 'stack'],
     properties: const [
       PropertySchema(
         name: 'mainAxisAlignment',
@@ -338,6 +385,16 @@ WidgetDemo _elevatedButtonDemo() {
     icon: Icons.smart_button,
     category: 'Input',
     description: 'A Material button with elevation.',
+    documentation: 'A Material Design elevated button. Elevated buttons are high-emphasis buttons that '
+        'are used for primary actions. They add dimension to mostly flat layouts. '
+        'Avoid using elevated buttons on already-elevated content such as dialogs or cards.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'onPressed', type: 'VoidCallback?', description: 'Called when the button is tapped', isRequired: true),
+      WidgetPropertyRef(name: 'child', type: 'Widget?', description: 'The button\'s label', isRequired: true),
+      WidgetPropertyRef(name: 'style', type: 'ButtonStyle?', description: 'Defines the button\'s visual properties'),
+      WidgetPropertyRef(name: 'onLongPress', type: 'VoidCallback?', description: 'Called when the button is long-pressed'),
+    ],
+    relatedWidgetIds: const ['text_field', 'switch_widget', 'slider_widget'],
     properties: const [
       PropertySchema(name: 'label', label: 'Label', type: PropertyType.string, defaultValue: 'Click Me'),
       PropertySchema(name: 'enabled', label: 'Enabled', type: PropertyType.bool, defaultValue: true),
@@ -403,6 +460,16 @@ WidgetDemo _iconDemo() {
     icon: Icons.emoji_emotions_outlined,
     category: 'Display',
     description: 'A Material Design icon.',
+    documentation: 'A graphical icon widget drawn with a glyph from a font described in an IconData '
+        'such as Material\'s predefined IconDatas in Icons. Icons are not interactive. '
+        'For an interactive icon, consider using IconButton.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'icon', type: 'IconData', description: 'The icon to display', isRequired: true),
+      WidgetPropertyRef(name: 'size', type: 'double?', description: 'The size of the icon in logical pixels'),
+      WidgetPropertyRef(name: 'color', type: 'Color?', description: 'The color to use when drawing the icon'),
+      WidgetPropertyRef(name: 'semanticLabel', type: 'String?', description: 'Semantic label for accessibility'),
+    ],
+    relatedWidgetIds: const ['text', 'elevated_button', 'opacity'],
     properties: const [
       PropertySchema(
         name: 'icon',
@@ -455,6 +522,18 @@ WidgetDemo _cardDemo() {
     icon: Icons.credit_card,
     category: 'Composite',
     description: 'A Material card with elevation and rounded corners.',
+    documentation: 'A Material Design card. A card is a sheet of Material used to represent some related '
+        'information, for example an album, a geographical location, a meal, contact details, etc. '
+        'Cards are most commonly used to present a collection of similar items in a way that is '
+        'easy for users to scan.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'child', type: 'Widget?', description: 'The widget below this widget in the tree'),
+      WidgetPropertyRef(name: 'elevation', type: 'double?', description: 'The z-coordinate of the card'),
+      WidgetPropertyRef(name: 'shape', type: 'ShapeBorder?', description: 'The shape of the card\'s Material'),
+      WidgetPropertyRef(name: 'color', type: 'Color?', description: 'The card\'s background color'),
+      WidgetPropertyRef(name: 'clipBehavior', type: 'Clip', description: 'How to clip the card\'s content', defaultValue: 'Clip.none'),
+    ],
+    relatedWidgetIds: const ['list_tile', 'container'],
     properties: const [
       PropertySchema(name: 'elevation', label: 'Elevation', type: PropertyType.double, defaultValue: 4.0, min: 0, max: 24),
       PropertySchema(name: 'borderRadius', label: 'Border Radius', type: PropertyType.double, defaultValue: 12.0, min: 0, max: 32),
@@ -569,6 +648,17 @@ WidgetDemo _stackDemo() {
     displayName: 'Stack',
     icon: Icons.layers,
     description: 'Overlaps children on top of each other.',
+    documentation: 'Stack allows you to overlay multiple children widgets. This class is useful if you '
+        'want to overlap several children in a simple way, for example having some text and an '
+        'image, overlaid with a gradient and a button attached to the bottom. Use Positioned '
+        'widgets to control where children appear within the stack.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'children', type: 'List<Widget>', description: 'The widgets to display in the stack', isRequired: true),
+      WidgetPropertyRef(name: 'alignment', type: 'AlignmentGeometry', description: 'How to align the non-positioned children', defaultValue: 'AlignmentDirectional.topStart'),
+      WidgetPropertyRef(name: 'fit', type: 'StackFit', description: 'How to size non-positioned children', defaultValue: 'StackFit.loose'),
+      WidgetPropertyRef(name: 'clipBehavior', type: 'Clip', description: 'How to clip children that overflow', defaultValue: 'Clip.hardEdge'),
+    ],
+    relatedWidgetIds: const ['row', 'column', 'container'],
     properties: const [
       PropertySchema(
         name: 'alignment',
@@ -654,6 +744,15 @@ WidgetDemo _paddingDemo() {
     displayName: 'Padding',
     icon: Icons.padding,
     description: 'Adds empty space around a child widget.',
+    documentation: 'A widget that insets its child by the given padding. When passing layout constraints '
+        'to its child, padding shrinks the constraints by the given padding, causing the child '
+        'to layout at a smaller size. Padding then sizes itself to its child\'s size, inflated '
+        'by the padding, effectively creating empty space around the child.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'padding', type: 'EdgeInsetsGeometry', description: 'The amount of space to surround the child', isRequired: true),
+      WidgetPropertyRef(name: 'child', type: 'Widget?', description: 'The widget below this widget in the tree'),
+    ],
+    relatedWidgetIds: const ['container', 'center', 'sized_box'],
     properties: const [
       PropertySchema(name: 'horizontal', label: 'Horizontal', type: PropertyType.double, defaultValue: 24.0, min: 0, max: 64),
       PropertySchema(name: 'vertical', label: 'Vertical', type: PropertyType.double, defaultValue: 16.0, min: 0, max: 64),
@@ -719,6 +818,16 @@ WidgetDemo _centerDemo() {
     displayName: 'Center',
     icon: Icons.center_focus_strong,
     description: 'Centers its child within itself.',
+    documentation: 'A widget that centers its child within itself. This widget will be as big as possible '
+        'if its dimensions are constrained and widthFactor and heightFactor are null. '
+        'If a dimension is unconstrained and the corresponding size factor is null then the '
+        'widget will match its child\'s size in that dimension.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'child', type: 'Widget?', description: 'The widget below this widget in the tree'),
+      WidgetPropertyRef(name: 'widthFactor', type: 'double?', description: 'Multiplied with child width to set this widget\'s width'),
+      WidgetPropertyRef(name: 'heightFactor', type: 'double?', description: 'Multiplied with child height to set this widget\'s height'),
+    ],
+    relatedWidgetIds: const ['container', 'padding', 'sized_box'],
     properties: const [
       PropertySchema(name: 'widthFactor', label: 'Width Factor', type: PropertyType.double, defaultValue: 1.0, min: 0.5, max: 3.0),
       PropertySchema(name: 'heightFactor', label: 'Height Factor', type: PropertyType.double, defaultValue: 1.0, min: 0.5, max: 3.0),
@@ -779,6 +888,18 @@ WidgetDemo _wrapDemo() {
     displayName: 'Wrap',
     icon: Icons.wrap_text,
     description: 'Lays out children and wraps to the next line.',
+    documentation: 'A Wrap lays out each child and attempts to place the child adjacent to the previous '
+        'child in the main axis, given by direction, leaving spacing space in between. If there '
+        'is not enough space to fit the child, Wrap creates a new run adjacent to the existing '
+        'children in the cross axis.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'children', type: 'List<Widget>', description: 'The widgets to display', isRequired: true),
+      WidgetPropertyRef(name: 'spacing', type: 'double', description: 'Gap between adjacent children', defaultValue: '0.0'),
+      WidgetPropertyRef(name: 'runSpacing', type: 'double', description: 'Gap between runs', defaultValue: '0.0'),
+      WidgetPropertyRef(name: 'alignment', type: 'WrapAlignment', description: 'How children are aligned within a run', defaultValue: 'WrapAlignment.start'),
+      WidgetPropertyRef(name: 'direction', type: 'Axis', description: 'The direction to use as the main axis', defaultValue: 'Axis.horizontal'),
+    ],
+    relatedWidgetIds: const ['row', 'column'],
     properties: const [
       PropertySchema(name: 'spacing', label: 'Spacing', type: PropertyType.double, defaultValue: 8.0, min: 0, max: 24),
       PropertySchema(name: 'runSpacing', label: 'Run Spacing', type: PropertyType.double, defaultValue: 8.0, min: 0, max: 24),
@@ -860,6 +981,19 @@ WidgetDemo _listTileDemo() {
     icon: Icons.list,
     category: 'Composite',
     description: 'A single row with icon, text, and trailing action.',
+    documentation: 'A single fixed-height row that typically contains some text as well as a leading or '
+        'trailing icon. ListTile is commonly used in ListView or as children of Card widgets. '
+        'It provides a standard layout for list items with a title, optional subtitle, leading '
+        'and trailing widgets.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'title', type: 'Widget?', description: 'The primary content of the list tile'),
+      WidgetPropertyRef(name: 'subtitle', type: 'Widget?', description: 'Additional content displayed below the title'),
+      WidgetPropertyRef(name: 'leading', type: 'Widget?', description: 'A widget to display before the title'),
+      WidgetPropertyRef(name: 'trailing', type: 'Widget?', description: 'A widget to display after the title'),
+      WidgetPropertyRef(name: 'dense', type: 'bool?', description: 'Whether this list tile is a smaller, denser layout'),
+      WidgetPropertyRef(name: 'onTap', type: 'GestureTapCallback?', description: 'Called when the user taps this list tile'),
+    ],
+    relatedWidgetIds: const ['card', 'divider', 'container'],
     properties: const [
       PropertySchema(name: 'title', label: 'Title', type: PropertyType.string, defaultValue: 'List Tile Title'),
       PropertySchema(name: 'subtitle', label: 'Subtitle', type: PropertyType.string, defaultValue: 'Secondary text goes here'),
@@ -932,6 +1066,17 @@ WidgetDemo _sizedBoxDemo() {
     displayName: 'SizedBox',
     icon: Icons.aspect_ratio,
     description: 'A box with a fixed width and/or height.',
+    documentation: 'A box with a specified size. If given a child, this widget forces it to have a '
+        'specific width and/or height. If either the width or height is null, this widget will '
+        'try to size itself to match the child\'s size in that dimension. '
+        'SizedBox.expand makes the box fill its parent. SizedBox.shrink makes the box as small '
+        'as possible.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'width', type: 'double?', description: 'If non-null, requires the child to have exactly this width'),
+      WidgetPropertyRef(name: 'height', type: 'double?', description: 'If non-null, requires the child to have exactly this height'),
+      WidgetPropertyRef(name: 'child', type: 'Widget?', description: 'The widget below this widget in the tree'),
+    ],
+    relatedWidgetIds: const ['container', 'padding', 'center'],
     properties: const [
       PropertySchema(name: 'width', label: 'Width', type: PropertyType.double, defaultValue: 200.0, min: 20, max: 400),
       PropertySchema(name: 'height', label: 'Height', type: PropertyType.double, defaultValue: 100.0, min: 20, max: 300),
@@ -1003,6 +1148,17 @@ WidgetDemo _sliderDemo() {
     icon: Icons.tune,
     category: 'Input',
     description: 'A Material slider for selecting a value from a range.',
+    documentation: 'A Material Design slider. Used to select from a range of values. '
+        'A slider can be used to select from either a continuous or a discrete set of values. '
+        'The default is to use a continuous range of values from min to max.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'value', type: 'double', description: 'The currently selected value', isRequired: true),
+      WidgetPropertyRef(name: 'onChanged', type: 'ValueChanged<double>?', description: 'Called during a drag when the user selects a new value', isRequired: true),
+      WidgetPropertyRef(name: 'min', type: 'double', description: 'The minimum value the user can select', defaultValue: '0.0'),
+      WidgetPropertyRef(name: 'max', type: 'double', description: 'The maximum value the user can select', defaultValue: '1.0'),
+      WidgetPropertyRef(name: 'divisions', type: 'int?', description: 'The number of discrete divisions'),
+    ],
+    relatedWidgetIds: const ['switch_widget', 'elevated_button', 'text_field'],
     properties: const [
       PropertySchema(name: 'value', label: 'Value', type: PropertyType.double, defaultValue: 0.5, min: 0.0, max: 1.0),
       PropertySchema(name: 'divisions', label: 'Divisions', type: PropertyType.int, defaultValue: 0, min: 0, max: 20),
@@ -1072,6 +1228,17 @@ WidgetDemo _dividerDemo() {
     icon: Icons.horizontal_rule,
     category: 'Display',
     description: 'A thin horizontal or vertical line.',
+    documentation: 'A thin horizontal line, with padding on either side. In the Material Design language, '
+        'this represents a divider. Dividers can be used in lists, drawers, and elsewhere to '
+        'separate content.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'height', type: 'double?', description: 'The total height of the divider, including space', defaultValue: '16.0'),
+      WidgetPropertyRef(name: 'thickness', type: 'double?', description: 'Thickness of the line drawn', defaultValue: '0.0'),
+      WidgetPropertyRef(name: 'indent', type: 'double?', description: 'Leading empty space', defaultValue: '0.0'),
+      WidgetPropertyRef(name: 'endIndent', type: 'double?', description: 'Trailing empty space', defaultValue: '0.0'),
+      WidgetPropertyRef(name: 'color', type: 'Color?', description: 'The color of the line'),
+    ],
+    relatedWidgetIds: const ['list_tile', 'container'],
     properties: const [
       PropertySchema(name: 'thickness', label: 'Thickness', type: PropertyType.double, defaultValue: 1.0, min: 0.5, max: 8),
       PropertySchema(name: 'indent', label: 'Indent', type: PropertyType.double, defaultValue: 0.0, min: 0, max: 60),
@@ -1132,6 +1299,17 @@ WidgetDemo _opacityDemo() {
     icon: Icons.opacity,
     category: 'Display',
     description: 'Makes a child partially transparent.',
+    documentation: 'Makes its child partially transparent. This class paints its child into an intermediate '
+        'buffer and then blends the child back into the scene partially transparent. '
+        'For values of opacity other than 0.0 and 1.0, this class is relatively expensive '
+        'because it requires painting the child into an intermediate buffer. Consider using '
+        'AnimatedOpacity for smooth transitions.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'opacity', type: 'double', description: 'The fraction to scale the child\'s alpha value (0.0 to 1.0)', isRequired: true),
+      WidgetPropertyRef(name: 'child', type: 'Widget?', description: 'The widget below this widget in the tree'),
+      WidgetPropertyRef(name: 'alwaysIncludeSemantics', type: 'bool', description: 'Whether the semantics of the child are always included', defaultValue: 'false'),
+    ],
+    relatedWidgetIds: const ['container', 'icon'],
     properties: const [
       PropertySchema(name: 'opacity', label: 'Opacity', type: PropertyType.double, defaultValue: 0.5, min: 0.0, max: 1.0),
       PropertySchema(
@@ -1188,6 +1366,17 @@ WidgetDemo _progressIndicatorDemo() {
     icon: Icons.donut_large,
     category: 'Display',
     description: 'Circular or linear progress indicators.',
+    documentation: 'A Material Design progress indicator. There are two types: circular and linear. '
+        'A progress indicator informs the user about the status of ongoing processes such as '
+        'loading an app, submitting a form, or saving updates. They can be determinate (showing '
+        'a specific percentage) or indeterminate (showing an animation).',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'value', type: 'double?', description: 'The value of the progress indicator (0.0 to 1.0, null for indeterminate)'),
+      WidgetPropertyRef(name: 'color', type: 'Color?', description: 'The progress indicator\'s color'),
+      WidgetPropertyRef(name: 'backgroundColor', type: 'Color?', description: 'The color of the track behind the indicator'),
+      WidgetPropertyRef(name: 'strokeWidth', type: 'double', description: 'The width of the line (circular only)', defaultValue: '4.0'),
+    ],
+    relatedWidgetIds: const ['container', 'opacity'],
     properties: const [
       PropertySchema(
         name: 'type',
@@ -1270,6 +1459,17 @@ WidgetDemo _textFieldDemo() {
     icon: Icons.edit,
     category: 'Input',
     description: 'A Material text input field.',
+    documentation: 'A Material Design text field. Text fields allow users to type text into an app. '
+        'They are used to build forms, messaging, search experiences, and more. '
+        'TextField calls the onChanged callback whenever the user changes the text in the field.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'controller', type: 'TextEditingController?', description: 'Controls the text being edited'),
+      WidgetPropertyRef(name: 'decoration', type: 'InputDecoration?', description: 'The decoration to show around the text field'),
+      WidgetPropertyRef(name: 'onChanged', type: 'ValueChanged<String>?', description: 'Called when the user changes the text'),
+      WidgetPropertyRef(name: 'enabled', type: 'bool?', description: 'Whether the text field is enabled'),
+      WidgetPropertyRef(name: 'obscureText', type: 'bool', description: 'Whether to hide the text being edited', defaultValue: 'false'),
+    ],
+    relatedWidgetIds: const ['elevated_button', 'switch_widget', 'card'],
     properties: const [
       PropertySchema(name: 'label', label: 'Label', type: PropertyType.string, defaultValue: 'Email'),
       PropertySchema(name: 'hint', label: 'Hint', type: PropertyType.string, defaultValue: 'Enter your email'),
@@ -1357,6 +1557,16 @@ WidgetDemo _switchDemo() {
     icon: Icons.toggle_on_outlined,
     category: 'Input',
     description: 'A Material on/off toggle switch.',
+    documentation: 'A Material Design switch. Used to toggle the on/off state of a single setting. '
+        'The switch itself does not maintain any state. Instead, when the state of the switch '
+        'changes, the widget calls the onChanged callback.',
+    propertyReference: const [
+      WidgetPropertyRef(name: 'value', type: 'bool', description: 'Whether this switch is on or off', isRequired: true),
+      WidgetPropertyRef(name: 'onChanged', type: 'ValueChanged<bool>?', description: 'Called when the user toggles the switch', isRequired: true),
+      WidgetPropertyRef(name: 'activeColor', type: 'Color?', description: 'The color to use for the thumb when the switch is on'),
+      WidgetPropertyRef(name: 'activeTrackColor', type: 'Color?', description: 'The color to use for the track when the switch is on'),
+    ],
+    relatedWidgetIds: const ['elevated_button', 'slider_widget', 'text_field'],
     properties: const [
       PropertySchema(name: 'value', label: 'Value', type: PropertyType.bool, defaultValue: true),
       PropertySchema(name: 'showLabel', label: 'Show Label', type: PropertyType.bool, defaultValue: true),
