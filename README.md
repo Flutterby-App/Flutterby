@@ -4,6 +4,8 @@ An interactive Flutter widget explorer, design workbench, and reference tool. Se
 
 Built with Flutter, for learning Flutter.
 
+![Flutterby v4 — interactive widget explorer with live preview, property editors, and design tools](screenshot.png)
+
 ## Features
 
 ### Explore & Play
