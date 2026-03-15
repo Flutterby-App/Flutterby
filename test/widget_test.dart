@@ -40,7 +40,7 @@ void main() {
     await tester.pumpWidget(const FlutterbyApp());  // ignore: prefer_const_constructors
 
     expect(find.text('Flutterby'), findsOneWidget);
-    expect(find.text('v3'), findsOneWidget);
+    expect(find.text('v4'), findsOneWidget);
   });
 
   testWidgets('Widget selector shows all widgets', (WidgetTester tester) async {

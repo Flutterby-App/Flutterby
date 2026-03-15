@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
 
+import '../models/device_spec.dart';
+
 class PreviewPanel extends StatelessWidget {
   final String widgetName;
   final String description;
   final Widget child;
+  final DeviceSpec selectedDevice;
+  final bool showSafeArea;
+  final ValueChanged<DeviceSpec> onDeviceChanged;
+  final VoidCallback onSafeAreaToggled;
+  final bool galleryMode;
+  final VoidCallback onGalleryToggled;
 
   const PreviewPanel({
     super.key,
     required this.widgetName,
     this.description = '',
     required this.child,
+    required this.selectedDevice,
+    this.showSafeArea = false,
+    required this.onDeviceChanged,
+    required this.onSafeAreaToggled,
+    required this.galleryMode,
+    required this.onGalleryToggled,
   });
 
   @override
@@ -23,7 +37,7 @@ class PreviewPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
+            padding: const EdgeInsets.fromLTRB(24, 14, 12, 8),
             child: Row(
               children: [
                 Text(
@@ -46,36 +60,86 @@ class PreviewPanel extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ],
+                ] else
+                  const Spacer(),
+                // Gallery toggle
+                IconButton(
+                  icon: Icon(
+                    galleryMode ? Icons.grid_view : Icons.grid_view_outlined,
+                    size: 18,
+                  ),
+                  tooltip: 'Toggle gallery (g)',
+                  onPressed: onGalleryToggled,
+                  visualDensity: VisualDensity.compact,
+                ),
+                // Device frame dropdown
+                PopupMenuButton<DeviceSpec>(
+                  tooltip: 'Device frame (d)',
+                  icon: Icon(
+                    selectedDevice.type == DeviceType.none
+                        ? Icons.phone_android_outlined
+                        : Icons.phone_android,
+                    size: 18,
+                  ),
+                  onSelected: onDeviceChanged,
+                  itemBuilder: (_) => devicePresets.map((d) {
+                    return PopupMenuItem(
+                      value: d,
+                      child: Row(
+                        children: [
+                          if (d.name == selectedDevice.name)
+                            Icon(Icons.check, size: 16, color: colorScheme.primary)
+                          else
+                            const SizedBox(width: 16),
+                          const SizedBox(width: 8),
+                          Text(d.name, style: const TextStyle(fontSize: 13)),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+                // Safe area toggle (only when device is selected)
+                if (selectedDevice.type != DeviceType.none)
+                  IconButton(
+                    icon: Icon(
+                      showSafeArea ? Icons.safety_check : Icons.safety_check_outlined,
+                      size: 18,
+                    ),
+                    tooltip: 'Toggle safe area',
+                    onPressed: onSafeAreaToggled,
+                    visualDensity: VisualDensity.compact,
+                  ),
               ],
             ),
           ),
           Divider(height: 1, color: colorScheme.outlineVariant),
           Expanded(
-            child: Center(
-              child: Container(
-                margin: const EdgeInsets.all(32),
-                constraints: const BoxConstraints(maxWidth: 500, maxHeight: 400),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: colorScheme.outlineVariant),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+            child: galleryMode
+                ? child
+                : Center(
+                    child: Container(
+                      margin: const EdgeInsets.all(32),
+                      constraints: const BoxConstraints(maxWidth: 500, maxHeight: 400),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: colorScheme.outlineVariant),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CustomPaint(
+                          painter: _CheckerboardPainter(isDark: isDark),
+                          child: Center(child: child),
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CustomPaint(
-                    painter: _CheckerboardPainter(isDark: isDark),
-                    child: Center(child: child),
                   ),
-                ),
-              ),
-            ),
           ),
         ],
       ),

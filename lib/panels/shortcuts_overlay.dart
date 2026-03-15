@@ -14,6 +14,9 @@ class ShortcutsOverlay extends StatelessWidget {
     ('r', 'Reset to defaults'),
     ('c', 'Copy source code'),
     ('t', 'Toggle dark/light theme'),
+    ('s', 'Copy share link'),
+    ('g', 'Toggle gallery mode'),
+    ('d', 'Cycle device frame'),
     ('⌘Z', 'Undo property change'),
     ('⌘⇧Z', 'Redo property change'),
   ];
