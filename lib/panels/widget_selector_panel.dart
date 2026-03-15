@@ -5,12 +5,14 @@ class WidgetSelectorPanel extends StatefulWidget {
   final List<WidgetDemo> demos;
   final String selectedId;
   final ValueChanged<String> onSelected;
+  final FocusNode? searchFocusNode;
 
   const WidgetSelectorPanel({
     super.key,
     required this.demos,
     required this.selectedId,
     required this.onSelected,
+    this.searchFocusNode,
   });
 
   @override
@@ -73,6 +75,7 @@ class _WidgetSelectorPanelState extends State<WidgetSelectorPanel> {
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 16, 12, 8),
             child: TextField(
+              focusNode: widget.searchFocusNode,
               style: const TextStyle(fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'Filter widgets...',

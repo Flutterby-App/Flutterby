@@ -7,6 +7,12 @@ class PropertyEditorPanel extends StatelessWidget {
   final Map<String, dynamic> values;
   final ValueChanged<Map<String, dynamic>> onChanged;
   final VoidCallback? onReset;
+  final bool canUndo;
+  final bool canRedo;
+  final VoidCallback? onUndo;
+  final VoidCallback? onRedo;
+  final String? highlightedPropertyName;
+  final ValueChanged<String?>? onPropertyHover;
 
   const PropertyEditorPanel({
     super.key,
@@ -14,6 +20,12 @@ class PropertyEditorPanel extends StatelessWidget {
     required this.values,
     required this.onChanged,
     this.onReset,
+    this.canUndo = false,
+    this.canRedo = false,
+    this.onUndo,
+    this.onRedo,
+    this.highlightedPropertyName,
+    this.onPropertyHover,
   });
 
   void _update(String name, dynamic value) {
@@ -24,6 +36,8 @@ class PropertyEditorPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Expanded(
@@ -33,25 +47,57 @@ class PropertyEditorPanel extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final prop = properties[index];
-              return _buildEditor(prop);
+              final isHighlighted = highlightedPropertyName == prop.name;
+              return MouseRegion(
+                onEnter: (_) => onPropertyHover?.call(prop.name),
+                onExit: (_) => onPropertyHover?.call(null),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isHighlighted
+                        ? colorScheme.primaryContainer.withValues(alpha: 0.4)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: _buildEditor(prop),
+                ),
+              );
             },
           ),
         ),
-        if (onReset != null)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: onReset,
-                icon: const Icon(Icons.restart_alt, size: 16),
-                label: const Text('Reset to defaults', style: TextStyle(fontSize: 13)),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: Row(
+            children: [
+              if (onUndo != null)
+                IconButton(
+                  icon: const Icon(Icons.undo, size: 18),
+                  tooltip: 'Undo',
+                  onPressed: canUndo ? onUndo : null,
+                  visualDensity: VisualDensity.compact,
+                ),
+              if (onRedo != null)
+                IconButton(
+                  icon: const Icon(Icons.redo, size: 18),
+                  tooltip: 'Redo',
+                  onPressed: canRedo ? onRedo : null,
+                  visualDensity: VisualDensity.compact,
+                ),
+              if (onUndo != null || onRedo != null) const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: onReset,
+                  icon: const Icon(Icons.restart_alt, size: 16),
+                  label: const Text('Reset to defaults', style: TextStyle(fontSize: 13)),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
+        ),
       ],
     );
   }
@@ -87,6 +133,7 @@ class PropertyEditorPanel extends StatelessWidget {
           value: values[prop.name] as String? ?? prop.options!.first,
           options: prop.options!,
           onChanged: (v) => _update(prop.name, v),
+          visualHint: prop.visualHint,
         ),
       PropertyType.color => const SizedBox.shrink(),
     };
@@ -247,9 +294,19 @@ class _BoolEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         _Label(label),
+        const SizedBox(width: 8),
+        Text(
+          value ? 'enabled' : 'disabled',
+          style: TextStyle(
+            fontSize: 11,
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+            fontStyle: FontStyle.italic,
+          ),
+        ),
         const Spacer(),
         Switch(value: value, onChanged: onChanged),
       ],
@@ -262,12 +319,14 @@ class _EnumEditor extends StatelessWidget {
   final String value;
   final List<String> options;
   final ValueChanged<String> onChanged;
+  final PropertyVisualHint visualHint;
 
   const _EnumEditor({
     required this.label,
     required this.value,
     required this.options,
     required this.onChanged,
+    this.visualHint = PropertyVisualHint.none,
   });
 
   @override
@@ -275,7 +334,19 @@ class _EnumEditor extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Label(label),
+        Row(
+          children: [
+            _Label(label),
+            if (visualHint == PropertyVisualHint.color) ...[
+              const SizedBox(width: 8),
+              _ColorSwatch(colorName: value),
+            ],
+            if (visualHint == PropertyVisualHint.alignment) ...[
+              const SizedBox(width: 8),
+              _AlignmentGrid(value: value),
+            ],
+          ],
+        ),
         const SizedBox(height: 6),
         Wrap(
           spacing: 6,
@@ -305,6 +376,106 @@ class _EnumEditor extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Inline color swatch showing current selection.
+class _ColorSwatch extends StatelessWidget {
+  final String colorName;
+  const _ColorSwatch({required this.colorName});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _colorForOption(colorName);
+    if (color == null) return const SizedBox.shrink();
+    return Container(
+      width: 16,
+      height: 16,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outlineVariant,
+          width: 1.5,
+        ),
+      ),
+    );
+  }
+}
+
+/// 3x3 alignment dot grid with selected position highlighted.
+class _AlignmentGrid extends StatelessWidget {
+  final String value;
+  const _AlignmentGrid({required this.value});
+
+  static const _posMap = {
+    'topLeft': (0, 0),
+    'topCenter': (1, 0),
+    'topRight': (2, 0),
+    'centerLeft': (0, 1),
+    'center': (1, 1),
+    'centerRight': (2, 1),
+    'bottomLeft': (0, 2),
+    'bottomCenter': (1, 2),
+    'bottomRight': (2, 2),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final pos = _posMap[value] ?? (1, 1);
+    return SizedBox(
+      width: 24,
+      height: 24,
+      child: CustomPaint(
+        painter: _AlignmentGridPainter(
+          selectedCol: pos.$1,
+          selectedRow: pos.$2,
+          dotColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          selectedColor: colorScheme.primary,
+        ),
+      ),
+    );
+  }
+}
+
+class _AlignmentGridPainter extends CustomPainter {
+  final int selectedCol;
+  final int selectedRow;
+  final Color dotColor;
+  final Color selectedColor;
+
+  _AlignmentGridPainter({
+    required this.selectedCol,
+    required this.selectedRow,
+    required this.dotColor,
+    required this.selectedColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final dotPaint = Paint()..color = dotColor;
+    final selectedPaint = Paint()..color = selectedColor;
+
+    for (int row = 0; row < 3; row++) {
+      for (int col = 0; col < 3; col++) {
+        final x = (col / 2) * size.width;
+        final y = (row / 2) * size.height;
+        final isSelected = col == selectedCol && row == selectedRow;
+        canvas.drawCircle(
+          Offset(x, y),
+          isSelected ? 3.5 : 2.0,
+          isSelected ? selectedPaint : dotPaint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_AlignmentGridPainter oldDelegate) =>
+      selectedCol != oldDelegate.selectedCol ||
+      selectedRow != oldDelegate.selectedRow ||
+      dotColor != oldDelegate.dotColor ||
+      selectedColor != oldDelegate.selectedColor;
 }
 
 /// Returns a Color if the option name matches a known color preset.

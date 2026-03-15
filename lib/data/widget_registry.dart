@@ -44,7 +44,7 @@ Widget _demoBox(String label) {
   );
 }
 
-/// All demo widgets available in Flutterby v2, grouped by category.
+/// All demo widgets available in Flutterby v3, grouped by category.
 final List<WidgetDemo> widgetRegistry = [
   // Display
   _textDemo(),
@@ -103,6 +103,7 @@ WidgetDemo _textDemo() {
         type: PropertyType.enumChoice,
         defaultValue: 'Black',
         options: ['Black', 'Blue', 'Red', 'Green', 'Orange', 'Purple', 'Teal', 'Indigo'],
+        visualHint: PropertyVisualHint.color,
       ),
       PropertySchema(
         name: 'textAlign',
@@ -120,15 +121,17 @@ WidgetDemo _textDemo() {
       }[props['textAlign']] ?? TextAlign.center;
       final color = _textColors[props['color']] ?? Colors.black;
 
-      return Text(
-        props['text'] as String,
-        textAlign: align,
+      return AnimatedDefaultTextStyle(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
         style: TextStyle(
           fontSize: (props['fontSize'] as num).toDouble(),
           fontWeight: props['bold'] == true ? FontWeight.bold : FontWeight.normal,
           fontStyle: props['italic'] == true ? FontStyle.italic : FontStyle.normal,
           color: color,
         ),
+        textAlign: align,
+        child: Text(props['text'] as String),
       );
     },
     sourceGenerator: (props) {
@@ -189,13 +192,16 @@ WidgetDemo _containerDemo() {
         type: PropertyType.enumChoice,
         defaultValue: 'Blue',
         options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Teal', 'Grey', 'Indigo'],
+        visualHint: PropertyVisualHint.color,
       ),
       PropertySchema(name: 'borderRadius', label: 'Border Radius', type: PropertyType.double, defaultValue: 12.0, min: 0, max: 64),
       PropertySchema(name: 'childText', label: 'Child Text', type: PropertyType.string, defaultValue: 'Container'),
     ],
     previewBuilder: (props) {
       final color = presetColors[props['color']] ?? Colors.blue;
-      return Container(
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
         width: (props['width'] as num).toDouble(),
         height: (props['height'] as num).toDouble(),
         padding: EdgeInsets.all((props['padding'] as num).toDouble()),
@@ -485,6 +491,7 @@ WidgetDemo _iconDemo() {
         type: PropertyType.enumChoice,
         defaultValue: 'Blue',
         options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Teal', 'Grey', 'Indigo'],
+        visualHint: PropertyVisualHint.color,
       ),
     ],
     previewBuilder: (props) {
@@ -666,6 +673,7 @@ WidgetDemo _stackDemo() {
         type: PropertyType.enumChoice,
         defaultValue: 'center',
         options: ['topLeft', 'topCenter', 'topRight', 'centerLeft', 'center', 'centerRight', 'bottomLeft', 'bottomCenter', 'bottomRight'],
+        visualHint: PropertyVisualHint.alignment,
       ),
       PropertySchema(name: 'layers', label: 'Layers', type: PropertyType.int, defaultValue: 3, min: 2, max: 4),
       PropertySchema(name: 'offset', label: 'Offset', type: PropertyType.double, defaultValue: 20.0, min: 5, max: 40),
@@ -683,7 +691,9 @@ WidgetDemo _stackDemo() {
           alignment: alignment,
           children: [
             for (int i = 0; i < layers; i++)
-              Positioned(
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
                 left: i * offset,
                 top: i * offset,
                 child: Container(
@@ -771,7 +781,9 @@ WidgetDemo _paddingDemo() {
                 borderRadius: BorderRadius.circular(4),
               )
             : null,
-        child: Padding(
+        child: AnimatedPadding(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
           padding: EdgeInsets.symmetric(horizontal: h, vertical: v),
           child: Container(
             padding: const EdgeInsets.all(12),
@@ -846,7 +858,10 @@ WidgetDemo _centerDemo() {
                 borderRadius: BorderRadius.circular(4),
               )
             : null,
-        child: Center(
+        child: AnimatedAlign(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          alignment: Alignment.center,
           widthFactor: wf,
           heightFactor: hf,
           child: Container(
@@ -1088,33 +1103,33 @@ WidgetDemo _sizedBoxDemo() {
       final h = (props['height'] as num).toDouble();
       final hasChild = props['hasChild'] == true;
 
-      return Container(
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.indigo.withValues(alpha: 0.5), width: 1.5),
           borderRadius: BorderRadius.circular(4),
         ),
-        child: SizedBox(
-          width: w,
-          height: h,
-          child: hasChild
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        props['childText'] as String,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${w.round()} × ${h.round()}',
-                        style: const TextStyle(fontSize: 11, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                )
-              : null,
-        ),
+        width: w,
+        height: h,
+        child: hasChild
+            ? Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      props['childText'] as String,
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${w.round()} × ${h.round()}',
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              )
+            : null,
       );
     },
     sourceGenerator: (props) {
@@ -1169,6 +1184,7 @@ WidgetDemo _sliderDemo() {
         type: PropertyType.enumChoice,
         defaultValue: 'Blue',
         options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Indigo'],
+        visualHint: PropertyVisualHint.color,
       ),
     ],
     previewBuilder: (props) {
@@ -1249,6 +1265,7 @@ WidgetDemo _dividerDemo() {
         type: PropertyType.enumChoice,
         defaultValue: 'Grey',
         options: ['Grey', 'Blue', 'Red', 'Green', 'Orange', 'Purple', 'Teal', 'Indigo'],
+        visualHint: PropertyVisualHint.color,
       ),
     ],
     previewBuilder: (props) {
@@ -1325,6 +1342,7 @@ WidgetDemo _opacityDemo() {
         type: PropertyType.enumChoice,
         defaultValue: 'Blue',
         options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Indigo'],
+        visualHint: PropertyVisualHint.color,
       ),
     ],
     previewBuilder: (props) {
@@ -1332,7 +1350,9 @@ WidgetDemo _opacityDemo() {
       final iconData = _presetIcons[props['icon']] ?? Icons.star;
       final color = presetColors[props['color']] ?? Colors.blue;
 
-      return Opacity(
+      return AnimatedOpacity(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
         opacity: opacity.clamp(0.0, 1.0),
         child: Icon(iconData, size: 80, color: color),
       );
@@ -1394,6 +1414,7 @@ WidgetDemo _progressIndicatorDemo() {
         type: PropertyType.enumChoice,
         defaultValue: 'Blue',
         options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Indigo'],
+        visualHint: PropertyVisualHint.color,
       ),
     ],
     previewBuilder: (props) {
@@ -1577,6 +1598,7 @@ WidgetDemo _switchDemo() {
         type: PropertyType.enumChoice,
         defaultValue: 'Blue',
         options: ['Blue', 'Red', 'Green', 'Orange', 'Purple', 'Teal', 'Indigo'],
+        visualHint: PropertyVisualHint.color,
       ),
     ],
     previewBuilder: (props) {

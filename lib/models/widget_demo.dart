@@ -10,6 +10,13 @@ enum PropertyType {
   int,
 }
 
+/// Visual hint for inline previews next to property values.
+enum PropertyVisualHint {
+  none,
+  color,
+  alignment,
+}
+
 /// Schema for a single editable property.
 class PropertySchema {
   final String name;
@@ -24,6 +31,9 @@ class PropertySchema {
   final double? min;
   final double? max;
 
+  /// Visual hint for inline preview next to the property value.
+  final PropertyVisualHint visualHint;
+
   const PropertySchema({
     required this.name,
     required this.label,
@@ -32,6 +42,7 @@ class PropertySchema {
     this.options,
     this.min,
     this.max,
+    this.visualHint = PropertyVisualHint.none,
   });
 }
 

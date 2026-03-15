@@ -40,7 +40,7 @@ void main() {
     await tester.pumpWidget(const FlutterbyApp());  // ignore: prefer_const_constructors
 
     expect(find.text('Flutterby'), findsOneWidget);
-    expect(find.text('v2'), findsOneWidget);
+    expect(find.text('v3'), findsOneWidget);
   });
 
   testWidgets('Widget selector shows all widgets', (WidgetTester tester) async {
@@ -116,8 +116,8 @@ void main() {
     await tester.tap(find.text('Source Code'));
     await tester.pumpAndSettle();
 
-    // Source code is rendered as SelectableText.rich — verify it exists
-    expect(find.byType(SelectableText), findsOneWidget);
+    // Source code is rendered as SelectableText.rich per line — verify they exist
+    expect(find.byType(SelectableText), findsWidgets);
   });
 
   testWidgets('Dark mode toggle works', (WidgetTester tester) async {

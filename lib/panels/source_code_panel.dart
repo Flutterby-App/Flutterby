@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../models/widget_demo.dart';
 import '../services/dartpad_service.dart';
 
 // VS Code dark+ inspired colors for Dart syntax highlighting.
@@ -13,15 +14,31 @@ const _codePunctuation = Color(0xFFD4D4D4); // grey — parens, commas
 const _codeProperty = Color(0xFF9CDCFE); // light blue — property names
 const _codeEnumValue = Color(0xFFDCDCAA); // yellow — enum values / methods
 
+const _highlightBg = Color(0x30569CD6); // subtle blue highlight band
+
 class SourceCodePanel extends StatelessWidget {
   final String source;
+  final String? highlightedPropertyName;
+  final List<PropertySchema>? properties;
+  final ValueChanged<String?>? onPropertyHover;
 
-  const SourceCodePanel({super.key, required this.source});
+  const SourceCodePanel({
+    super.key,
+    required this.source,
+    this.highlightedPropertyName,
+    this.properties,
+    this.onPropertyHover,
+  });
 
   @override
   Widget build(BuildContext context) {
     final lines = source.split('\n');
     final lineCount = lines.length;
+
+    // Build line -> property mapping for hover linking
+    final linePropertyMap = (properties != null)
+        ? _mapLinesToProperties(source, properties!)
+        : <int, String>{};
 
     return Container(
       color: _codeBg,
@@ -41,27 +58,21 @@ class SourceCodePanel extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         for (int i = 1; i <= lineCount; i++)
-                          SizedBox(
-                            height: 20.8, // matches line height 13 * 1.6
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: Text(
-                                '$i',
-                                style: const TextStyle(
-                                  fontFamily: 'JetBrains Mono, Fira Code, Menlo, Consolas, monospace',
-                                  fontSize: 13,
-                                  height: 1.6,
-                                  color: Color(0xFF858585),
-                                ),
-                              ),
-                            ),
-                          ),
+                          _buildLineNumber(i, linePropertyMap, lines[i - 1]),
                       ],
                     ),
                   ),
                 ),
                 // Code content
-                Expanded(child: _buildHighlightedCode()),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (int i = 0; i < lineCount; i++)
+                        _buildCodeLine(i, lines[i], linePropertyMap),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -82,20 +93,78 @@ class SourceCodePanel extends StatelessWidget {
     );
   }
 
-  Widget _buildHighlightedCode() {
-    final spans = _highlightDart(source);
-    return SelectableText.rich(
-      TextSpan(
-        style: const TextStyle(
-          fontFamily: 'JetBrains Mono, Fira Code, Menlo, Consolas, monospace',
-          fontSize: 13,
-          height: 1.6,
-          color: _codePlain,
+  Widget _buildLineNumber(int lineNum, Map<int, String> linePropertyMap, String lineText) {
+    final propName = linePropertyMap[lineNum - 1];
+    final isHighlighted = propName != null && propName == highlightedPropertyName;
+
+    return MouseRegion(
+      onEnter: propName != null ? (_) => onPropertyHover?.call(propName) : null,
+      onExit: propName != null ? (_) => onPropertyHover?.call(null) : null,
+      child: Container(
+        height: 20.8,
+        color: isHighlighted ? _highlightBg : null,
+        child: Padding(
+          padding: const EdgeInsets.only(right: 12),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '$lineNum',
+              style: const TextStyle(
+                fontFamily: 'JetBrains Mono, Fira Code, Menlo, Consolas, monospace',
+                fontSize: 13,
+                height: 1.6,
+                color: Color(0xFF858585),
+              ),
+            ),
+          ),
         ),
-        children: spans,
       ),
     );
   }
+
+  Widget _buildCodeLine(int index, String lineText, Map<int, String> linePropertyMap) {
+    final propName = linePropertyMap[index];
+    final isHighlighted = propName != null && propName == highlightedPropertyName;
+    final spans = _highlightDart(lineText);
+
+    return MouseRegion(
+      onEnter: propName != null ? (_) => onPropertyHover?.call(propName) : null,
+      onExit: propName != null ? (_) => onPropertyHover?.call(null) : null,
+      child: Container(
+        height: 20.8,
+        color: isHighlighted ? _highlightBg : null,
+        alignment: Alignment.centerLeft,
+        child: SelectableText.rich(
+          TextSpan(
+            style: const TextStyle(
+              fontFamily: 'JetBrains Mono, Fira Code, Menlo, Consolas, monospace',
+              fontSize: 13,
+              height: 1.6,
+              color: _codePlain,
+            ),
+            children: spans,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Maps source line indices to property names by scanning for `propName:` patterns.
+Map<int, String> _mapLinesToProperties(String source, List<PropertySchema> props) {
+  final lines = source.split('\n');
+  final propNames = props.map((p) => p.name).toSet();
+  final map = <int, String>{};
+  for (int i = 0; i < lines.length; i++) {
+    final trimmed = lines[i].trimLeft();
+    for (final name in propNames) {
+      if (trimmed.startsWith('$name:')) {
+        map[i] = name;
+        break;
+      }
+    }
+  }
+  return map;
 }
 
 class _CopyButton extends StatefulWidget {
